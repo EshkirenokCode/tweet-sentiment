@@ -7,9 +7,15 @@ if __name__ == "__main__":
     parser.add_argument("--url", required=True)
     args = parser.parse_args()
     with httpx.Client(base_url=args.url, timeout=30) as client:
+        redirect = client.get("/")
+        assert redirect.status_code == 307 and redirect.headers["location"] == "/docs"
         assert client.get("/health").json() == {"status": "alive"}
         assert client.get("/ready").json()["status"] == "ready"
         assert client.get("/docs").status_code == 200
+        schema = client.get("/openapi.json").json()
+        assert schema["components"]["schemas"]["PredictionResponse"]["examples"] == [
+            {"label": "positive", "model_version": "1.0.0"}
+        ]
         response = client.post("/predict", json={"text": "I love this wonderful app!"})
         response.raise_for_status()
         assert response.json()["label"] in ("negative", "neutral", "positive")

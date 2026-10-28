@@ -82,5 +82,11 @@ differs across splits. The test set has been inspected for error analysis; any l
 improvements must disclose its reuse. Load only the trusted repository artifact:
 joblib is executable serialization, and its checksum is a corruption check, not authentication.
 
+The frozen v1 preprocessing expands `can't`, `won't` and other `n't` forms, but
+does not expand `cannot` (which the stop word list removes). Some letter emoticons
+such as `:D` are lost after lowercasing. These are known baseline limitations;
+correcting them requires a new trained model and a disclosed repeat evaluation,
+not a silent preprocessing change to this published artifact.
+
 [Interview notes](reports/interview.md) and a [short submission text](reports/application.txt)
 are included. Nothing has been sent to the employer.

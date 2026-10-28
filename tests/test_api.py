@@ -30,12 +30,19 @@ def artifact(tmp_path):
 
 def test_success_and_docs(artifact):
     with TestClient(create_app(artifact)) as client:
+        redirect = client.get("/", follow_redirects=False)
+        assert redirect.status_code == 307
+        assert redirect.headers["location"] == "/docs"
         assert client.get("/health").status_code == 200
         assert client.get("/ready").json()["status"] == "ready"
         response = client.post("/predict", json={"text": "good great"})
         assert response.status_code == 200
         assert response.json() == {"label": "positive", "model_version": "test"}
         assert client.get("/docs").status_code == 200
+        schema = client.get("/openapi.json").json()
+        assert schema["components"]["schemas"]["PredictionResponse"]["examples"] == [
+            {"label": "positive", "model_version": "1.0.0"}
+        ]
 
 
 @pytest.mark.parametrize(

@@ -6,7 +6,7 @@ from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 from threadpoolctl import threadpool_limits
 
 from tweet_sentiment import LABELS
@@ -64,6 +64,9 @@ class PredictionRequest(BaseModel):
 
 
 class PredictionResponse(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={"examples": [{"label": "positive", "model_version": "1.0.0"}]}
+    )
     label: Literal["negative", "neutral", "positive"]
     model_version: str
 
@@ -89,6 +92,10 @@ def create_app(artifact_dir=None):
         description="Three-class sentiment for English text. No calibrated confidence.",
     )
     app.add_middleware(BodyLimit)
+
+    @app.get("/", include_in_schema=False)
+    def index():
+        return RedirectResponse("/docs")
 
     @app.get("/health")
     def health():

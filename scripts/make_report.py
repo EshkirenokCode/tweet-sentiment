@@ -144,6 +144,12 @@ Normalization-empty requests return 422 rather than a prediction. Inputs that
 contain tokens outside the learned vocabulary can still receive a default-like
 linear prediction; a label alone is not evidence of certainty. Training and serving
 use the same serialized pipeline, strict model checksums and pinned dependencies.
+
+Final source audit: the frozen v1 cleaner does not expand `cannot`, which the
+stop word list removes, and lowercasing can discard letter emoticons such as `:D`.
+These bounded preprocessing limitations are disclosed rather than changing the
+published model after test inspection. A correction requires a new trained model,
+new metrics and explicit disclosure that the original test has already been used.
 """
     Path("reports/evaluation.md").write_text(report)
     submission = (
