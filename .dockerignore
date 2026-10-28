@@ -1,0 +1,9 @@
+**
+!requirements.lock
+!pyproject.toml
+!src/
+!src/tweet_sentiment/
+!src/tweet_sentiment/*.py
+!artifacts/
+!artifacts/model.joblib
+!artifacts/metadata.json

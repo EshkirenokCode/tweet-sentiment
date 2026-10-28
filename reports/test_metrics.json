@@ -1,0 +1,105 @@
+{
+  "model_version": "1.0.0",
+  "artifact_sha256": "2f0278b7a3b346cc2da6f096d2321e14a775fd20d589ac199edbe43643e68a2f",
+  "data_manifest_sha256": "d01a95d44d4e2d7bdd89ea11d5267d10c4b45b5b94a245d20783ba441f9158ad",
+  "official": {
+    "count": 12284,
+    "label_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "accuracy": 0.5773363725170955,
+    "macro_precision": 0.5708249150594371,
+    "macro_recall": 0.5737394276267659,
+    "macro_f1": 0.5630883560983754,
+    "per_class": {
+      "negative": {
+        "precision": 0.6305048335123523,
+        "recall": 0.4433534743202417,
+        "f1-score": 0.5206208425720621,
+        "support": 3972.0
+      },
+      "neutral": {
+        "precision": 0.6019188424032714,
+        "recall": 0.6446016506653192,
+        "f1-score": 0.6225294835298902,
+        "support": 5937.0
+      },
+      "positive": {
+        "precision": 0.48005106926268754,
+        "recall": 0.6332631578947369,
+        "f1-score": 0.5461147421931736,
+        "support": 2375.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        1761,
+        1779,
+        432
+      ],
+      [
+        913,
+        3827,
+        1197
+      ],
+      [
+        119,
+        752,
+        1504
+      ]
+    ]
+  },
+  "unseen_normalized": {
+    "count": 12284,
+    "label_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "accuracy": 0.5773363725170955,
+    "macro_precision": 0.5708249150594371,
+    "macro_recall": 0.5737394276267659,
+    "macro_f1": 0.5630883560983754,
+    "per_class": {
+      "negative": {
+        "precision": 0.6305048335123523,
+        "recall": 0.4433534743202417,
+        "f1-score": 0.5206208425720621,
+        "support": 3972.0
+      },
+      "neutral": {
+        "precision": 0.6019188424032714,
+        "recall": 0.6446016506653192,
+        "f1-score": 0.6225294835298902,
+        "support": 5937.0
+      },
+      "positive": {
+        "precision": 0.48005106926268754,
+        "recall": 0.6332631578947369,
+        "f1-score": 0.5461147421931736,
+        "support": 2375.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        1761,
+        1779,
+        432
+      ],
+      [
+        913,
+        3827,
+        1197
+      ],
+      [
+        119,
+        752,
+        1504
+      ]
+    ]
+  },
+  "excluded_overlap_rows": 0,
+  "empty_policy": "Official metrics include every row; API rejects empty normalized inputs."
+}

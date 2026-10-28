@@ -1,0 +1,7 @@
+{
+  "name": "svc_words_stop",
+  "kind": "svc",
+  "C": 1.0,
+  "remove_stopwords": true,
+  "char": false
+}

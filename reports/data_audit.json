@@ -1,0 +1,112 @@
+{
+  "splits": {
+    "train": {
+      "count": 45615,
+      "class_counts": {
+        "positive": 17849,
+        "neutral": 20673,
+        "negative": 7093
+      },
+      "null_texts": 0,
+      "empty_raw": 0,
+      "empty_normalized": 0,
+      "empty_with_stopwords_removed": 0,
+      "raw": {
+        "duplicate_groups": 25,
+        "excess_rows": 28,
+        "conflicting_label_groups": 3
+      },
+      "normalized": {
+        "duplicate_groups": 81,
+        "excess_rows": 91,
+        "conflicting_label_groups": 20
+      }
+    },
+    "val": {
+      "count": 2000,
+      "class_counts": {
+        "neutral": 869,
+        "positive": 819,
+        "negative": 312
+      },
+      "null_texts": 0,
+      "empty_raw": 0,
+      "empty_normalized": 0,
+      "empty_with_stopwords_removed": 0,
+      "raw": {
+        "duplicate_groups": 0,
+        "excess_rows": 0,
+        "conflicting_label_groups": 0
+      },
+      "normalized": {
+        "duplicate_groups": 0,
+        "excess_rows": 0,
+        "conflicting_label_groups": 0
+      }
+    },
+    "test": {
+      "count": 12284,
+      "class_counts": {
+        "neutral": 5937,
+        "positive": 2375,
+        "negative": 3972
+      },
+      "null_texts": 0,
+      "empty_raw": 0,
+      "empty_normalized": 0,
+      "empty_with_stopwords_removed": 0,
+      "raw": {
+        "duplicate_groups": 0,
+        "excess_rows": 0,
+        "conflicting_label_groups": 0
+      },
+      "normalized": {
+        "duplicate_groups": 5,
+        "excess_rows": 9,
+        "conflicting_label_groups": 3
+      }
+    }
+  },
+  "overlaps": {
+    "raw": {
+      "train/val": {
+        "shared_keys": 0,
+        "rows_in_first": 0,
+        "rows_in_second": 0,
+        "conflicting_label_keys": 0
+      },
+      "train/test": {
+        "shared_keys": 0,
+        "rows_in_first": 0,
+        "rows_in_second": 0,
+        "conflicting_label_keys": 0
+      },
+      "val/test": {
+        "shared_keys": 0,
+        "rows_in_first": 0,
+        "rows_in_second": 0,
+        "conflicting_label_keys": 0
+      }
+    },
+    "normalized": {
+      "train/val": {
+        "shared_keys": 7,
+        "rows_in_first": 8,
+        "rows_in_second": 7,
+        "conflicting_label_keys": 1
+      },
+      "train/test": {
+        "shared_keys": 0,
+        "rows_in_first": 0,
+        "rows_in_second": 0,
+        "conflicting_label_keys": 0
+      },
+      "val/test": {
+        "shared_keys": 0,
+        "rows_in_first": 0,
+        "rows_in_second": 0,
+        "conflicting_label_keys": 0
+      }
+    }
+  }
+}

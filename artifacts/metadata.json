@@ -1,0 +1,101 @@
+{
+  "model_version": "1.0.0",
+  "created_at": "2026-10-28T09:54:18.257416+00:00",
+  "sha256": "2f0278b7a3b346cc2da6f096d2321e14a775fd20d589ac199edbe43643e68a2f",
+  "labels": [
+    "negative",
+    "neutral",
+    "positive"
+  ],
+  "config": {
+    "name": "svc_words_stop",
+    "kind": "svc",
+    "C": 1.0,
+    "remove_stopwords": true,
+    "char": false
+  },
+  "experiment": {
+    "seed": 42,
+    "selection_metric": "validation.macro_f1",
+    "training_split": "train",
+    "refit_with_validation": false,
+    "word_ngram_range": [
+      1,
+      2
+    ],
+    "word_min_df": 2,
+    "word_max_features": 120000,
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "char_min_df": 3,
+    "char_max_features": 120000,
+    "sublinear_tf": true,
+    "candidates": [
+      {
+        "name": "dummy",
+        "kind": "dummy",
+        "remove_stopwords": false,
+        "char": false
+      },
+      {
+        "name": "lr_words_stop",
+        "kind": "lr",
+        "C": 2.0,
+        "remove_stopwords": true,
+        "char": false
+      },
+      {
+        "name": "lr_words_keep",
+        "kind": "lr",
+        "C": 2.0,
+        "remove_stopwords": false,
+        "char": false
+      },
+      {
+        "name": "svc_words_stop",
+        "kind": "svc",
+        "C": 1.0,
+        "remove_stopwords": true,
+        "char": false
+      },
+      {
+        "name": "svc_words_keep",
+        "kind": "svc",
+        "C": 1.0,
+        "remove_stopwords": false,
+        "char": false
+      },
+      {
+        "name": "svc_wordchar_stop",
+        "kind": "svc",
+        "C": 1.0,
+        "remove_stopwords": true,
+        "char": true
+      },
+      {
+        "name": "svc_wordchar_keep",
+        "kind": "svc",
+        "C": 1.0,
+        "remove_stopwords": false,
+        "char": true
+      }
+    ]
+  },
+  "experiment_sha256": "6285dc68ec843dff9529be43a559d2182e63d5bf66f63b39bbf3ce0575f09aad",
+  "data_manifest_sha256": "d01a95d44d4e2d7bdd89ea11d5267d10c4b45b5b94a245d20783ba441f9158ad",
+  "dependencies": {
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0"
+  },
+  "python_minor": "3.12",
+  "python": "3.12.14",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "training_threads": 1,
+  "final_train_seconds": 1.3551396660041064,
+  "artifact_bytes": 2304931
+}

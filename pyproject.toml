@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools==82.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tweet-sentiment"
+version = "1.0.0"
+description = "Reproducible three-class English tweet sentiment classifier and HTTP API"
+requires-python = ">=3.12,<3.13"
+authors = [{name = "Ilia Gulevskii"}]
+dependencies = [
+  "scikit-learn==1.9.1", "fastapi==0.162.0", "uvicorn==0.54.0",
+  "joblib==1.6.0", "threadpoolctl==3.7.0",
+]
+
+[project.optional-dependencies]
+dev = ["httpx==0.28.1", "pytest==9.2.0", "ruff==0.17.3"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: requires the real trained artifact"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

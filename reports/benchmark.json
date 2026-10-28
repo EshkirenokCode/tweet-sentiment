@@ -1,0 +1,38 @@
+{
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "cpu": "Apple M4 Pro",
+  "batch_size": 1,
+  "warmup": 30,
+  "threads": 1,
+  "threadpools": [
+    {
+      "user_api": "openmp",
+      "internal_api": "openmp",
+      "num_threads": 1,
+      "prefix": "libomp",
+      "filepath": "/Users/ilya/Documents/ChatGPT/tweet-sentiment/.venv/lib/python3.12/site-packages/sklearn/.dylibs/libomp.dylib",
+      "version": null
+    }
+  ],
+  "model_sha256": "2f0278b7a3b346cc2da6f096d2321e14a775fd20d589ac199edbe43643e68a2f",
+  "dependencies": {
+    "scikit-learn": "1.9.1",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "joblib": "1.6.0",
+    "threadpoolctl": "3.7.0"
+  },
+  "artifact_bytes": 2304931,
+  "final_train_seconds": 1.3551396660041064,
+  "in_process": {
+    "p50_ms": 0.18708300194703043,
+    "p95_ms": 0.1974621176486835,
+    "measurements": 500
+  },
+  "http_loopback": {
+    "p50_ms": 0.7079790229909122,
+    "p95_ms": 0.8452163572655991,
+    "measurements": 500
+  },
+  "http_notes": "One uvicorn worker, keep-alive, sequential requests, loopback."
+}
