@@ -1,0 +1,22 @@
+{
+  "seed": 42,
+  "selection_metric": "validation.macro_f1",
+  "training_split": "train",
+  "refit_with_validation": false,
+  "word_ngram_range": [1, 2],
+  "word_min_df": 2,
+  "word_max_features": 120000,
+  "char_ngram_range": [3, 5],
+  "char_min_df": 3,
+  "char_max_features": 120000,
+  "sublinear_tf": true,
+  "candidates": [
+    {"name": "dummy", "kind": "dummy", "remove_stopwords": false, "char": false},
+    {"name": "lr_words_stop", "kind": "lr", "C": 2.0, "remove_stopwords": true, "char": false},
+    {"name": "lr_words_keep", "kind": "lr", "C": 2.0, "remove_stopwords": false, "char": false},
+    {"name": "svc_words_stop", "kind": "svc", "C": 1.0, "remove_stopwords": true, "char": false},
+    {"name": "svc_words_keep", "kind": "svc", "C": 1.0, "remove_stopwords": false, "char": false},
+    {"name": "svc_wordchar_stop", "kind": "svc", "C": 1.0, "remove_stopwords": true, "char": true},
+    {"name": "svc_wordchar_keep", "kind": "svc", "C": 1.0, "remove_stopwords": false, "char": true}
+  ]
+}
