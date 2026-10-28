@@ -151,11 +151,12 @@ use the same serialized pipeline, strict model checksums and pinned dependencies
         "TF-IDF + LinearSVC and a FastAPI API. Official test: accuracy 57.73%, "
         "macro-F1 0.5631. Includes trained model, data checksums, evaluation, tests "
         "and Docker setup. Repository: https://github.com/EshkirenokCode/tweet-sentiment. "
-        "Public API deployment is pending."
+        "Live API: https://tweet-sentiment.gulevskii.dev/docs"
     )
     assert len(submission) <= 500
     Path("reports/application.txt").write_text(submission + "\n")
     write_json(
-        "reports/application_metadata.json", {"characters": len(submission), "public_api": None}
+        "reports/application_metadata.json",
+        {"characters": len(submission), "public_api": "https://tweet-sentiment.gulevskii.dev"},
     )
     print("Report written; application characters:", len(submission))

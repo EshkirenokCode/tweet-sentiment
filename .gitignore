@@ -8,3 +8,7 @@ data/
 .DS_Store
 dist/
 build/
+.env
+host.env
+tls/
+*.pem

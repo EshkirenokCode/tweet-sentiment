@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-28T10:16:07.456968+00:00",
+  "public_url": "https://tweet-sentiment.gulevskii.dev",
+  "client": "Developer Mac, outside the hosting server; normal TLS verification enabled",
+  "model_version": "1.0.0",
+  "http_status_checks": {
+    "/health": 200,
+    "/ready": 200,
+    "/docs": 200,
+    "/openapi.json": 200,
+    "POST /predict": 200,
+    "blank_text": 422,
+    "wrong_type": 422,
+    "long_text": 422,
+    "oversized_body": 413
+  },
+  "prediction": {
+    "label": "positive",
+    "model_version": "1.0.0"
+  },
+  "rate_limit_probe": {
+    "requests": 24,
+    "max_concurrent_clients": 16,
+    "status_counts": {
+      "200": 12,
+      "429": 12
+    }
+  }
+}

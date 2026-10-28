@@ -32,7 +32,9 @@ Interactive documentation: `http://127.0.0.1:8000/docs`.
 The API rejects invalid/blank/normalization-empty input, strings over 2000 characters,
 and HTTP bodies over 8192 bytes. Labels have no calibrated confidence.
 
-Public HTTPS API: **pending hosting**. The loopback URL above is local only.
+Public HTTPS API: **https://tweet-sentiment.gulevskii.dev**.
+[Interactive API docs](https://tweet-sentiment.gulevskii.dev/docs).
+The loopback URL above is for local development.
 [Deployment instructions and limits](deploy/README.md), [verification status](reports/deployment.md).
 
 ## Reproduce
