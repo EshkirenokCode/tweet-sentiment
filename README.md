@@ -90,3 +90,6 @@ not a silent preprocessing change to this published artifact.
 
 [Interview notes](reports/interview.md) and a [short submission text](reports/application.txt)
 are included. Nothing has been sent to the employer.
+
+[Final v1.0.0 review](reports/final_review.md) records reproduction, deployment
+verification and the known limits of this portfolio baseline.
