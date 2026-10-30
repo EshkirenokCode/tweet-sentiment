@@ -1,31 +1,55 @@
 {
-  "verified_at_utc": "2026-10-30T09:05:07.837416+00:00",
+  "verified_at_utc": "2026-10-30T10:17:13.722029+00:00",
   "public_url": "https://tweet-sentiment.gulevskii.dev",
   "client": "Developer Mac; TLS verification enabled",
-  "model_version": "1.1.0",
-  "model_sha256": "29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1",
+  "model_version": "1.2.0",
+  "model_sha256": "607d4ca17d8bde0b2209abacd6adc82c2333c098f4b20edf25fb642d7196eeec",
+  "model_assets": {
+    "encoder/model.onnx": "87f7be9b92440eb90992f11475f052a9934923728f2a67311f6dbb41d24af8c6",
+    "encoder/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+  },
   "http_status_checks": {
     "/health": 200,
     "/ready": 200,
     "/docs": 200,
     "/openapi.json": 200,
-    "POST /predict": 200,
     "blank_text": 422,
     "wrong_type": 422,
     "long_text": 422,
-    "oversized_body": 413
-  },
-  "prediction": {
-    "label": "positive",
-    "model_version": "1.1.0"
+    "token_overflow": 422,
+    "long_valid_text": 200,
+    "oversized_body": 413,
+    "POST /predict": 200
   },
   "preprocessing_regression_cases": 4,
   "rate_limit_probe": {
     "requests": 24,
     "max_concurrent_clients": 16,
     "status_counts": {
-      "200": 14,
-      "429": 10
+      "200": 15,
+      "429": 9
     }
-  }
+  },
+  "source_commit": "3bb31cfa73ede526f8606b127f8261f85bca55f0",
+  "server_architecture": "x86_64",
+  "ci_run": "https://github.com/EshkirenokCode/tweet-sentiment/actions/runs/41039295247",
+  "ci_conclusion": "success",
+  "unit_tests_passed": 33,
+  "resources": {
+    "api_cpu": 1,
+    "api_memory_limit_mib": 512,
+    "api_memory_after_acceptance_mib": 153.3,
+    "ingress_cpu": 0.25,
+    "ingress_memory_limit_mib": 64,
+    "ingress_memory_after_acceptance_mib": 5.629
+  },
+  "other_projects_start_times_unchanged": true,
+  "other_projects_restart_counts_unchanged": true,
+  "existing_application_proxy_config_checksums_unchanged": true,
+  "certificate": {
+    "expires_at_utc": "2027-01-26T09:14:18Z",
+    "renewal_timer": "active",
+    "last_service_result": "success"
+  },
+  "temporary_canary_removed": true
 }

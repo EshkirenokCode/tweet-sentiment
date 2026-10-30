@@ -106,5 +106,12 @@
     ]
   },
   "excluded_overlap_rows": 0,
-  "empty_policy": "Official metrics include every row; API rejects empty normalized inputs."
+  "empty_policy": "Official metrics include every row; API rejects empty normalized inputs.",
+  "evaluation_environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_threads": 1,
+    "batch_size": 1,
+    "runtime": "onnxruntime 1.31.1"
+  }
 }
