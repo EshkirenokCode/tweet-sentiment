@@ -1,0 +1,12 @@
+Pretrained source: sentence-transformers/all-MiniLM-L6-v2
+https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+Revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+Upstream model card license: Apache License 2.0 (included in LICENSE).
+
+Modified by Ilia Gulevskii for tweet-sentiment v1.2.0:
+- added a three-class sentiment head;
+- fine-tuned the encoder and head on TweetEval sentiment train;
+- exported to ONNX and dynamically quantized weights to int8.
+The tokenizer is copied from the pinned source through Transformers serialization.
+Training recipe and pinned dependencies are included in the repository.
+Dataset provenance and conditions are described in DATA.md; no corpus is distributed.

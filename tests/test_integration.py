@@ -31,3 +31,45 @@ def test_real_artifact():
                 "label": LABELS[label],
                 "model_version": metadata["model_version"],
             }
+
+
+@pytest.mark.integration
+def test_loaded_pipeline_roundtrip(tmp_path):
+    import joblib
+    import numpy as np
+
+    model, _ = load_artifact()
+    examples = ["I cannot recommend this.", "The meeting starts at ten.", "Wonderful news!"]
+    expected = model.predict(examples)
+    joblib.dump(model, tmp_path / "model.joblib")
+    restored = joblib.load(tmp_path / "model.joblib")
+    assert np.array_equal(restored.predict(examples), expected)
+
+
+@pytest.mark.integration
+def test_encoder_token_limit():
+    model, metadata = load_artifact()
+    if not metadata.get("assets"):
+        pytest.skip("Sparse model has no encoder token limit")
+    with TestClient(create_app()) as client:
+        response = client.post("/predict", json={"text": "xy! " * 100})
+        assert response.status_code == 422
+        assert "256 tokens" in response.json()["detail"]
+
+
+@pytest.mark.integration
+def test_corrupt_encoder_is_not_ready(tmp_path):
+    import json
+    import shutil
+
+    shutil.copyfile("artifacts/model.joblib", tmp_path / "model.joblib")
+    metadata = json.loads(Path("artifacts/metadata.json").read_text())
+    if not metadata.get("assets"):
+        pytest.skip("Sparse model has no encoder assets")
+    metadata["assets"] = {"encoder/model.onnx": metadata["assets"]["encoder/model.onnx"]}
+    (tmp_path / "encoder").mkdir()
+    (tmp_path / "encoder/model.onnx").write_bytes(b"corrupt")
+    (tmp_path / "metadata.json").write_text(json.dumps(metadata))
+    with TestClient(create_app(tmp_path)) as client:
+        assert client.get("/health").status_code == 200
+        assert client.get("/ready").status_code == 503

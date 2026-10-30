@@ -3,7 +3,7 @@ services:
   api:
     build:
       context: ..
-    image: tweet-sentiment:1.1.0
+    image: tweet-sentiment:1.2.0
     cpus: 1
     mem_limit: 512m
     read_only: true

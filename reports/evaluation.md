@@ -1,19 +1,29 @@
 # Evaluation
 
-Model 1.1.0: `svc_words_stop`.
-[Configuration](../configs/experiment.json), [data manifest](data_manifest.json),
+Model 1.2.0: `minilm_finetuned_int8`.
+[Training recipe](../experiments/protocol-v1.2.md), [data manifest](data_manifest.json),
 [model metadata](../artifacts/metadata.json).
 
-Artifact SHA-256: `29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1`.
+Artifact SHA-256: `607d4ca17d8bde0b2209abacd6adc82c2333c098f4b20edf25fb642d7196eeec`.
 
 ## Protocol
 
-The v1.1 revision fixes `cannot` expansion and letter-emoticon tokenization.
-The seven candidates, official splits and seed 42 are unchanged. Vocabulary, IDF
-and weights fit train only. Select by validation macro-F1 and refit on train only.
-The test was already evaluated and inspected in v1.0: the numbers below are a
-repeat measurement, not a new untouched holdout. No test-based parameter search
-was performed. See [protocol-v1.1.md](protocol-v1.1.md); v1.0 is kept at Git tag `v1.0.0`.
+v1.2 fine-tunes the general sentence encoder `sentence-transformers/all-MiniLM-L6-v2`
+(revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`) on TweetEval train.
+Two epochs, batch 32, AdamW lr=3e-5, weight decay 0.01, 10% warmup, seed 42,
+four CPU threads. Epoch 2 had the highest validation macro-F1. Stop words are kept.
+
+Eight sparse and six frozen-feature candidates were also compared on validation.
+The selected checkpoint was exported to ONNX and dynamically quantized. Int8 was
+preferred if its batch-one validation macro-F1 was within 0.005 of float; the
+observed drop was 0.0016.
+No test results were used to select the family, epoch or serving precision.
+
+The official test was already used in v1.0/v1.1. These are repeat measurements,
+not a fresh holdout. Earlier code and results remain at tag `v1.1.0`.
+[Protocol and candidates](../experiments/protocol-v1.2.md),
+[training parameters](experiments/training.json),
+[pretrained asset notice](../artifacts/encoder/NOTICE).
 
 ## Data
 
@@ -53,59 +63,78 @@ from the secondary result: 0 rows excluded.
 
 | Candidate | Accuracy | Macro precision | Macro recall | Macro F1 | Fit seconds |
 | --- | --- | --- | --- | --- | --- |
-| dummy | 0.4345 | 0.1448 | 0.3333 | 0.2019 | 1.29 |
-| lr_words_stop | 0.6920 | 0.6749 | 0.6386 | 0.6511 | 2.81 |
-| lr_words_keep | 0.6920 | 0.6766 | 0.6364 | 0.6496 | 4.50 |
-| svc_words_stop | 0.6875 | 0.6739 | 0.6493 | 0.6592 | 1.44 |
-| svc_words_keep | 0.6760 | 0.6542 | 0.6371 | 0.6443 | 1.75 |
-| svc_wordchar_stop | 0.6830 | 0.6631 | 0.6479 | 0.6544 | 6.45 |
-| svc_wordchar_keep | 0.6845 | 0.6645 | 0.6492 | 0.6557 | 8.15 |
+| v1.1_word_svc | 0.6875 | 0.6739 | 0.6493 | 0.6592 | 1.33 |
+| nb_words_keep_C1 | 0.6665 | 0.7006 | 0.5740 | 0.5871 | 1.68 |
+| nb_words_keep_C4 | 0.6900 | 0.6945 | 0.6196 | 0.6374 | 1.82 |
+| nb_words_stop_C1 | 0.6750 | 0.6979 | 0.5870 | 0.6020 | 1.38 |
+| nb_words_stop_C4 | 0.6910 | 0.6936 | 0.6225 | 0.6401 | 1.46 |
+| nb_wordchar_keep_C1 | 0.6895 | 0.7051 | 0.6127 | 0.6311 | 9.18 |
+| nb_wordchar_keep_C4 | 0.7050 | 0.6993 | 0.6452 | 0.6616 | 10.60 |
+| svc_wordchar_balanced | 0.6955 | 0.6694 | 0.6825 | 0.6750 | 6.26 |
+| lr_wordchar_balanced | 0.6840 | 0.6563 | 0.6695 | 0.6620 | 22.00 |
+| embeddings_C1_None | 0.6780 | 0.6672 | 0.6396 | 0.6502 | 0.56 |
+| embeddings_C10_None | 0.6745 | 0.6626 | 0.6396 | 0.6486 | 0.34 |
+| embeddings_C100_None | 0.6805 | 0.6696 | 0.6430 | 0.6533 | 0.58 |
+| hybrid_C0.1_None | 0.7070 | 0.6931 | 0.6655 | 0.6764 | 2.10 |
+| hybrid_C1_None | 0.6785 | 0.6599 | 0.6494 | 0.6542 | 7.87 |
+| hybrid_C0.1_balanced | 0.7050 | 0.6787 | 0.6982 | 0.6864 | 2.23 |
+| minilm_epoch_1_float | 0.7155 | 0.7021 | 0.6937 | 0.6977 | 165.16 |
+| minilm_epoch_2_float | 0.7205 | 0.7064 | 0.7064 | 0.7064 | 331.82 |
+| minilm_finetuned_int8 | 0.7235 | 0.7196 | 0.6946 | 0.7048 | 331.85 |
 
-Selected `svc_words_stop` by macro-F1 0.6592.
+Selected `minilm_finetuned_int8` by macro-F1 0.7048.
 Per-class results and confusion matrices for every candidate are in
 [validation_metrics.json](../artifacts/validation_metrics.json).
 
 ## Test
 
-Accuracy: **0.577906**. Macro precision: **0.571288**.
-Macro recall: **0.574020**. Macro F1: **0.563670**.
+Compared with v1.1, accuracy changed from 57.79% to 69.59%
+and macro-F1 from 0.5637 to 0.6924.
+That is 11.80 percentage points of accuracy
+and 1449 additional
+correct predictions.
+
+Accuracy: **0.695865**. Macro precision: **0.689014**.
+Macro recall: **0.697224**. Macro F1: **0.692425**.
 
 | Class | Precision | Recall | F1 | Support |
 | --- | --- | --- | --- | --- |
-| negative | 0.6296 | 0.4439 | 0.5207 | 3972 |
-| neutral | 0.6019 | 0.6458 | 0.6231 | 5937 |
-| positive | 0.4823 | 0.6324 | 0.5473 | 2375 |
+| negative | 0.7210 | 0.6850 | 0.7026 | 3972 |
+| neutral | 0.7034 | 0.6980 | 0.7007 | 5937 |
+| positive | 0.6426 | 0.7086 | 0.6740 | 2375 |
 
 Rows = gold; columns = predicted. Both orders: negative, neutral, positive.
 
 ```text
- 1763  1781   428
-  919  3834  1184
-  118   755  1502
+ 2721  1103   148
+ 1005  4144   788
+   48   644  1683
 ```
 
-Validation/test macro-F1 gap: 0.0955.
-Negative recall remains weak. Class balance differs across splits; the error sample
-also shows context and target-selection failures. [Error analysis](error_analysis.md).
+Validation/test macro-F1 gap: 0.0123.
+Negative recall improved from 0.4439 to
+0.6850. Class balance differs across splits;
+context and annotation ambiguity still cause errors. [Error analysis](error_analysis.md).
 Machine-readable results: [test_metrics.json](test_metrics.json).
 
 ## Runtime
 
-Final fit: 1.332 seconds.
-Artifact: 2,304,780 bytes.
+Local fine-tuning: 331.848 seconds.
+Inference files: 23,730,241 bytes. Training used four CPU threads.
 Apple M4 Pro, macOS-26.6.2-arm64-arm-64bit; one thread, batch size 1,
 30 warmups, five original short inputs. HTTP uses one worker and loopback keep-alive.
 
 | Mode | p50 ms | p95 ms | Measurements |
 | --- | --- | --- | --- |
-| in_process | 0.179 | 0.193 | 500 |
-| http_loopback | 0.735 | 0.912 | 500 |
+| in_process | 0.709 | 0.997 | 500 |
+| http_loopback | 1.326 | 1.644 | 500 |
 
 These are development-machine measurements, not server capacity estimates.
 [Benchmark details](benchmark.json), [deployment](deployment.md).
 
 ## Limits
 
-English only, no language detection or calibrated probability. Word n-grams miss
-sarcasm, negation scope and conversational context. Inputs empty after cleaning
-are rejected; unknown vocabulary can still produce a label from the linear model.
+English only, no language detection or calibrated probability. Sarcasm, mixed sentiment
+and missing context remain difficult. The API rejects inputs over 256 model tokens
+rather than silently truncating. Inputs empty after cleaning are rejected;
+out-of-domain inputs can still receive an unreliable label.

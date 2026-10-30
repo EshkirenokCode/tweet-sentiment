@@ -1,0 +1,112 @@
+[
+  {
+    "precision": "float",
+    "batch_size": 1,
+    "threads": 1,
+    "validation": {
+      "count": 2000,
+      "label_order": [
+        "negative",
+        "neutral",
+        "positive"
+      ],
+      "accuracy": 0.7205,
+      "macro_precision": 0.7063596657028343,
+      "macro_recall": 0.7064151858455655,
+      "macro_f1": 0.7063769414218831,
+      "per_class": {
+        "negative": {
+          "precision": 0.6485623003194888,
+          "recall": 0.6506410256410257,
+          "f1-score": 0.6496,
+          "support": 312.0
+        },
+        "neutral": {
+          "precision": 0.6986301369863014,
+          "recall": 0.7042577675489068,
+          "f1-score": 0.7014326647564469,
+          "support": 869.0
+        },
+        "positive": {
+          "precision": 0.7718865598027127,
+          "recall": 0.7643467643467643,
+          "f1-score": 0.7680981595092025,
+          "support": 819.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          203,
+          88,
+          21
+        ],
+        [
+          93,
+          612,
+          164
+        ],
+        [
+          17,
+          176,
+          626
+        ]
+      ]
+    },
+    "seconds": 5.34565254196059
+  },
+  {
+    "precision": "int8",
+    "batch_size": 1,
+    "threads": 1,
+    "validation": {
+      "count": 2000,
+      "label_order": [
+        "negative",
+        "neutral",
+        "positive"
+      ],
+      "accuracy": 0.7235,
+      "macro_precision": 0.7196149021108108,
+      "macro_recall": 0.6945524587929652,
+      "macro_f1": 0.7047573912639541,
+      "per_class": {
+        "negative": {
+          "precision": 0.6879699248120301,
+          "recall": 0.5865384615384616,
+          "f1-score": 0.6332179930795848,
+          "support": 312.0
+        },
+        "neutral": {
+          "precision": 0.6797520661157025,
+          "recall": 0.757192174913694,
+          "f1-score": 0.7163854109961895,
+          "support": 869.0
+        },
+        "positive": {
+          "precision": 0.7911227154046997,
+          "recall": 0.73992673992674,
+          "f1-score": 0.7646687697160883,
+          "support": 819.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          183,
+          109,
+          20
+        ],
+        [
+          71,
+          658,
+          140
+        ],
+        [
+          12,
+          201,
+          606
+        ]
+      ]
+    },
+    "seconds": 3.632293624919839
+  }
+]

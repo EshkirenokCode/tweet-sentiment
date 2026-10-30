@@ -13,24 +13,26 @@
       "version": null
     }
   ],
-  "model_sha256": "29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1",
+  "model_sha256": "607d4ca17d8bde0b2209abacd6adc82c2333c098f4b20edf25fb642d7196eeec",
   "dependencies": {
     "scikit-learn": "1.9.1",
     "numpy": "2.5.4",
     "scipy": "1.18.1",
     "joblib": "1.6.0",
-    "threadpoolctl": "3.7.0"
+    "threadpoolctl": "3.7.0",
+    "onnxruntime": "1.31.1",
+    "tokenizers": "0.23.3"
   },
-  "artifact_bytes": 2304780,
-  "final_train_seconds": 1.3321856249822304,
+  "artifact_bytes": 23730241,
+  "final_train_seconds": 331.8477023340529,
   "in_process": {
-    "p50_ms": 0.17947901505976915,
-    "p95_ms": 0.19296639366075397,
+    "p50_ms": 0.7085834513418376,
+    "p95_ms": 0.9971773659344763,
     "measurements": 500
   },
   "http_loopback": {
-    "p50_ms": 0.7346250349655747,
-    "p95_ms": 0.9116708301007743,
+    "p50_ms": 1.3259784900583327,
+    "p95_ms": 1.6443438420537857,
     "measurements": 500
   },
   "http_notes": "One uvicorn worker, keep-alive, sequential requests, loopback."

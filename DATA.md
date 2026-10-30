@@ -20,9 +20,14 @@ Checked on 2026-10-28:
 This repository therefore does not redistribute tweet texts or claim a license for
 the corpus. The ignored `data/` directory is for local reproduction. Error analysis
 uses split indices and paraphrased observations. API examples are original sentences.
-The trained linear model contains a vocabulary of n-grams and coefficients, not a
-copy of the full corpus; its availability does not grant rights to source tweets.
+The trained artifacts contain learned weights and a tokenizer, not a copy of the
+full corpus; their availability does not grant rights to source tweets.
 Review source conditions before other uses or redistribution.
+
+v1.2 fine-tunes [all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+at revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. The upstream model card
+lists Apache-2.0. Its license and a notice describing this project's weight changes
+are included in `artifacts/encoder/`. These notices do not license the TweetEval corpus.
 
 References: Barbieri et al. (2020), *TweetEval: Unified Benchmark and Comparative
 Evaluation for Tweet Classification*, Findings of EMNLP;

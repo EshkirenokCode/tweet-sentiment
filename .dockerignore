@@ -7,3 +7,5 @@
 !artifacts/
 !artifacts/model.joblib
 !artifacts/metadata.json
+!artifacts/encoder/
+!artifacts/encoder/*

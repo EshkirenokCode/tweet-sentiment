@@ -11,6 +11,7 @@ from threadpoolctl import threadpool_limits
 
 from tweet_sentiment import LABELS, __version__
 from tweet_sentiment.artifact import load_artifact
+from tweet_sentiment.encoder import TokenLimitError
 
 MAX_BODY_BYTES = 8192
 
@@ -50,7 +51,7 @@ class PredictionRequest(BaseModel):
     text: str = Field(
         min_length=1,
         max_length=2000,
-        description="English text; at most 2000 characters.",
+        description="English text; at most 2000 characters and 256 model tokens.",
         examples=["The update works really well."],
     )
 
@@ -119,7 +120,10 @@ def create_app(artifact_dir=None):
         ready()
         if not app.state.model.named_steps["normalize"].transform([request.text])[0]:
             raise HTTPException(422, "Text contains no usable tokens after normalization")
-        label = int(app.state.model.predict([request.text])[0])
+        try:
+            label = int(app.state.model.predict([request.text])[0])
+        except TokenLimitError as error:
+            raise HTTPException(422, str(error)) from error
         return {"label": LABELS[label], "model_version": app.state.metadata["model_version"]}
 
     return app

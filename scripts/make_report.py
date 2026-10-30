@@ -27,7 +27,12 @@ def make_report():
     if not (metadata["sha256"] == evaluation["artifact_sha256"] == benchmark["model_sha256"]):
         raise ValueError("Model, evaluation and benchmark refer to different artifacts")
     test = evaluation["official"]
-    winner = max(results, key=lambda row: row["validation"]["macro_f1"])
+    winner = {
+        "config": metadata["config"],
+        "validation": metadata["selection"]["selected"]["validation"],
+    }
+    baseline = read("reports/baseline_v1.1.json")["test"]
+    float_f1 = read("reports/experiments/precision_validation.json")[0]["validation"]["macro_f1"]
     splits = table(
         ["Split", "Rows", "Negative", "Neutral", "Positive"],
         [
@@ -105,19 +110,29 @@ def make_report():
     report = f"""# Evaluation
 
 Model {metadata["model_version"]}: `{metadata["config"]["name"]}`.
-[Configuration](../configs/experiment.json), [data manifest](data_manifest.json),
+[Training recipe](../experiments/protocol-v1.2.md), [data manifest](data_manifest.json),
 [model metadata](../artifacts/metadata.json).
 
 Artifact SHA-256: `{metadata["sha256"]}`.
 
 ## Protocol
 
-The v1.1 revision fixes `cannot` expansion and letter-emoticon tokenization.
-The seven candidates, official splits and seed 42 are unchanged. Vocabulary, IDF
-and weights fit train only. Select by validation macro-F1 and refit on train only.
-The test was already evaluated and inspected in v1.0: the numbers below are a
-repeat measurement, not a new untouched holdout. No test-based parameter search
-was performed. See [protocol-v1.1.md](protocol-v1.1.md); v1.0 is kept at Git tag `v1.0.0`.
+v1.2 fine-tunes the general sentence encoder `sentence-transformers/all-MiniLM-L6-v2`
+(revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`) on TweetEval train.
+Two epochs, batch 32, AdamW lr=3e-5, weight decay 0.01, 10% warmup, seed 42,
+four CPU threads. Epoch 2 had the highest validation macro-F1. Stop words are kept.
+
+Eight sparse and six frozen-feature candidates were also compared on validation.
+The selected checkpoint was exported to ONNX and dynamically quantized. Int8 was
+preferred if its batch-one validation macro-F1 was within 0.005 of float; the
+observed drop was {float_f1 - winner["validation"]["macro_f1"]:.4f}.
+No test results were used to select the family, epoch or serving precision.
+
+The official test was already used in v1.0/v1.1. These are repeat measurements,
+not a fresh holdout. Earlier code and results remain at tag `v1.1.0`.
+[Protocol and candidates](../experiments/protocol-v1.2.md),
+[training parameters](experiments/training.json),
+[pretrained asset notice](../artifacts/encoder/NOTICE).
 
 ## Data
 
@@ -145,6 +160,12 @@ Per-class results and confusion matrices for every candidate are in
 
 ## Test
 
+Compared with v1.1, accuracy changed from {baseline["accuracy"]:.2%} to {test["accuracy"]:.2%}
+and macro-F1 from {baseline["macro_f1"]:.4f} to {test["macro_f1"]:.4f}.
+That is {(test["accuracy"] - baseline["accuracy"]) * 100:.2f} percentage points of accuracy
+and {round((test["accuracy"] - baseline["accuracy"]) * test["count"])} additional
+correct predictions.
+
 Accuracy: **{test["accuracy"]:.6f}**. Macro precision: **{test["macro_precision"]:.6f}**.
 Macro recall: **{test["macro_recall"]:.6f}**. Macro F1: **{test["macro_f1"]:.6f}**.
 
@@ -157,14 +178,15 @@ Rows = gold; columns = predicted. Both orders: negative, neutral, positive.
 ```
 
 Validation/test macro-F1 gap: {winner["validation"]["macro_f1"] - test["macro_f1"]:.4f}.
-Negative recall remains weak. Class balance differs across splits; the error sample
-also shows context and target-selection failures. [Error analysis](error_analysis.md).
+Negative recall improved from {baseline["per_class"]["negative"]["recall"]:.4f} to
+{test["per_class"]["negative"]["recall"]:.4f}. Class balance differs across splits;
+context and annotation ambiguity still cause errors. [Error analysis](error_analysis.md).
 Machine-readable results: [test_metrics.json](test_metrics.json).
 
 ## Runtime
 
-Final fit: {metadata["final_train_seconds"]:.3f} seconds.
-Artifact: {metadata["artifact_bytes"]:,} bytes.
+Local fine-tuning: {metadata["final_train_seconds"]:.3f} seconds.
+Inference files: {metadata["artifact_bytes"]:,} bytes. Training used four CPU threads.
 {benchmark["cpu"]}, {benchmark["platform"]}; one thread, batch size 1,
 30 warmups, five original short inputs. HTTP uses one worker and loopback keep-alive.
 
@@ -175,15 +197,16 @@ These are development-machine measurements, not server capacity estimates.
 
 ## Limits
 
-English only, no language detection or calibrated probability. Word n-grams miss
-sarcasm, negation scope and conversational context. Inputs empty after cleaning
-are rejected; unknown vocabulary can still produce a label from the linear model.
+English only, no language detection or calibrated probability. Sarcasm, mixed sentiment
+and missing context remain difficult. The API rejects inputs over 256 model tokens
+rather than silently truncating. Inputs empty after cleaning are rejected;
+out-of-domain inputs can still receive an unreliable label.
 """
     Path("reports/evaluation.md").write_text(report)
     submission = (
-        f"English tweet sentiment API using TF-IDF + LinearSVC on TweetEval. "
+        f"English tweet sentiment API using MiniLM fine-tuned on TweetEval train. "
         f"v{metadata['model_version']} test: accuracy {test['accuracy']:.2%}, "
-        f"macro-F1 {test['macro_f1']:.4f} (same test set inspected in v1.0). "
+        f"macro-F1 {test['macro_f1']:.4f} (test set inspected in earlier versions). "
         "Code, model, metrics and Docker: https://github.com/EshkirenokCode/tweet-sentiment. "
         "API: https://tweet-sentiment.gulevskii.dev/docs"
     )

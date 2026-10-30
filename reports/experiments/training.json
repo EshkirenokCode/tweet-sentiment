@@ -1,0 +1,12 @@
+{
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "seed": 42,
+  "epochs": 2,
+  "batch_size": 32,
+  "learning_rate": 3e-05,
+  "weight_decay": 0.01,
+  "warmup_fraction": 0.1,
+  "threads": 4,
+  "seconds": 331.8477023340529
+}

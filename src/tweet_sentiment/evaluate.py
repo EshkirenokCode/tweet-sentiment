@@ -44,6 +44,8 @@ def evaluate(artifact_dir=Path("artifacts"), output=Path("reports/test_metrics.j
     result = {
         "model_version": metadata["model_version"],
         "artifact_sha256": metadata["sha256"],
+        "asset_sha256": metadata.get("assets", {}),
+        "metadata_sha256": sha256(artifact_dir / "metadata.json"),
         "data_manifest_sha256": metadata["data_manifest_sha256"],
         "official": metrics(y, predictions),
         "unseen_normalized": metrics(np.array(y)[clean], predictions[clean]),

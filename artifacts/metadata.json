@@ -1,102 +1,117 @@
 {
-  "model_version": "1.1.0",
-  "created_at": "2026-10-30T08:55:45.456524+00:00",
-  "sha256": "29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1",
+  "model_version": "1.2.0",
+  "created_at": "2026-10-30T09:45:48.795855+00:00",
+  "sha256": "607d4ca17d8bde0b2209abacd6adc82c2333c098f4b20edf25fb642d7196eeec",
   "labels": [
     "negative",
     "neutral",
     "positive"
   ],
   "config": {
-    "name": "svc_words_stop",
-    "kind": "svc",
-    "C": 1.0,
-    "remove_stopwords": true,
-    "char": false
+    "name": "minilm_finetuned_int8",
+    "kind": "onnx_minilm",
+    "remove_stopwords": false,
+    "char": false,
+    "preprocessing_version": 2,
+    "max_tokens": 256
+  },
+  "assets": {
+    "encoder/model.onnx": "87f7be9b92440eb90992f11475f052a9934923728f2a67311f6dbb41d24af8c6",
+    "encoder/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
   },
   "experiment": {
+    "source": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
     "seed": 42,
-    "preprocessing_version": 2,
-    "selection_metric": "validation.macro_f1",
-    "training_split": "train",
-    "refit_with_validation": false,
-    "word_ngram_range": [
-      1,
-      2
-    ],
-    "word_min_df": 2,
-    "word_max_features": 120000,
-    "char_ngram_range": [
-      3,
-      5
-    ],
-    "char_min_df": 3,
-    "char_max_features": 120000,
-    "sublinear_tf": true,
-    "candidates": [
-      {
-        "name": "dummy",
-        "kind": "dummy",
-        "remove_stopwords": false,
-        "char": false
-      },
-      {
-        "name": "lr_words_stop",
-        "kind": "lr",
-        "C": 2.0,
-        "remove_stopwords": true,
-        "char": false
-      },
-      {
-        "name": "lr_words_keep",
-        "kind": "lr",
-        "C": 2.0,
-        "remove_stopwords": false,
-        "char": false
-      },
-      {
-        "name": "svc_words_stop",
-        "kind": "svc",
-        "C": 1.0,
-        "remove_stopwords": true,
-        "char": false
-      },
-      {
-        "name": "svc_words_keep",
-        "kind": "svc",
-        "C": 1.0,
-        "remove_stopwords": false,
-        "char": false
-      },
-      {
-        "name": "svc_wordchar_stop",
-        "kind": "svc",
-        "C": 1.0,
-        "remove_stopwords": true,
-        "char": true
-      },
-      {
-        "name": "svc_wordchar_keep",
-        "kind": "svc",
-        "C": 1.0,
-        "remove_stopwords": false,
-        "char": true
-      }
-    ]
+    "epochs": 2,
+    "batch_size": 32,
+    "learning_rate": 3e-05,
+    "weight_decay": 0.01,
+    "warmup_fraction": 0.1,
+    "threads": 4,
+    "seconds": 331.8477023340529
   },
-  "experiment_sha256": "207b823a3701eab28e0df56458da4dd637e034f74be2a5c49917b5bff22cd121",
+  "experiment_sha256": "d655087ffa5ddcd0647102d7281142e4076e43286e5bfc0190971971ec6b2c15",
   "data_manifest_sha256": "d01a95d44d4e2d7bdd89ea11d5267d10c4b45b5b94a245d20783ba441f9158ad",
   "dependencies": {
     "scikit-learn": "1.9.1",
     "numpy": "2.5.4",
     "scipy": "1.18.1",
     "joblib": "1.6.0",
-    "threadpoolctl": "3.7.0"
+    "threadpoolctl": "3.7.0",
+    "onnxruntime": "1.31.1",
+    "tokenizers": "0.23.3"
   },
   "python_minor": "3.12",
   "python": "3.12.14",
   "platform": "macOS-26.6.2-arm64-arm-64bit",
-  "training_threads": 1,
-  "final_train_seconds": 1.3321856249822304,
-  "artifact_bytes": 2304780
+  "training_threads": 4,
+  "final_train_seconds": 331.8477023340529,
+  "artifact_bytes": 23730241,
+  "source": {
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "license": "Apache-2.0"
+  },
+  "selection": {
+    "precision": "int8",
+    "metric": "validation macro-F1",
+    "int8_max_f1_drop": 0.005,
+    "selected": {
+      "precision": "int8",
+      "batch_size": 1,
+      "threads": 1,
+      "validation": {
+        "count": 2000,
+        "label_order": [
+          "negative",
+          "neutral",
+          "positive"
+        ],
+        "accuracy": 0.7235,
+        "macro_precision": 0.7196149021108108,
+        "macro_recall": 0.6945524587929652,
+        "macro_f1": 0.7047573912639541,
+        "per_class": {
+          "negative": {
+            "precision": 0.6879699248120301,
+            "recall": 0.5865384615384616,
+            "f1-score": 0.6332179930795848,
+            "support": 312.0
+          },
+          "neutral": {
+            "precision": 0.6797520661157025,
+            "recall": 0.757192174913694,
+            "f1-score": 0.7163854109961895,
+            "support": 869.0
+          },
+          "positive": {
+            "precision": 0.7911227154046997,
+            "recall": 0.73992673992674,
+            "f1-score": 0.7646687697160883,
+            "support": 819.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            183,
+            109,
+            20
+          ],
+          [
+            71,
+            658,
+            140
+          ],
+          [
+            12,
+            201,
+            606
+          ]
+        ]
+      },
+      "seconds": 3.632293624919839
+    }
+  },
+  "test_status": "Previously inspected in v1.0/v1.1; repeat measurement."
 }
