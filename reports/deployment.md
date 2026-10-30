@@ -1,50 +1,37 @@
-# Deployment status
+# Deployment checks
 
-Local API on 2026-10-28: `/health`, `/ready`, `/docs` and prediction/validation
-requests verified against the evaluated artifact. Local loopback latency measured.
+Verified 2026-10-30, model v1.1.0.
 
-Docker is not installed on the development Mac. The API image was built and run
-successfully on the GitHub Actions Linux runner on 2026-10-28, with one CPU and
-512 MiB memory. Lint, all 25 tests and HTTP smoke checks passed, including `/docs`,
-readiness, prediction, invalid input and oversized bodies. No dataset download or
-retraining was performed in CI.
-
-Verified code commit: `7ada4c59d20581c68bfc19330eeb5d5f67e09783`.
-[Successful CI run](https://github.com/EshkirenokCode/tweet-sentiment/actions/runs/40668808889).
-That CI run checked the API image directly. The server Compose stack and nginx
-ingress were subsequently started and verified on the hosting server.
-
-## Public API, verified 2026-10-28
-
-- Base URL: https://tweet-sentiment.gulevskii.dev
-- Interactive docs: https://tweet-sentiment.gulevskii.dev/docs
-- DNS: A record created through the owner's Porkbun browser session; other records
-  retained. Public resolver returned the intended hosting IP.
-- TLS: trusted Let's Encrypt certificate for this exact hostname, valid through
-  2027-01-26; normal certificate verification was enabled during external checks.
+- [API and docs](https://tweet-sentiment.gulevskii.dev/docs); `/` redirects to docs.
+- `/health`, `/ready`, `/docs`, `/openapi.json`, prediction: HTTP 200.
+- Blank input, wrong type, excessive length: 422. Oversized body: 413.
+- Four preprocessing regression cases agreed with the local pipeline.
+- A 24-request probe returned 14 HTTP 200 and 10 HTTP 429 responses.
+- Normal TLS verification was enabled. Certificate expires 2027-01-26.
 - Model SHA-256 on the server:
-  `2f0278b7a3b346cc2da6f096d2321e14a775fd20d589ac199edbe43643e68a2f`.
-- `/health`, `/ready`, `/docs`, `/openapi.json` and `POST /predict`: HTTP 200.
-- Blank input, wrong type and excessive text length: HTTP 422; oversized body: 413.
-- Probe of 24 requests (at most 16 concurrent clients): 12 HTTP 200, 12 HTTP 429.
-  The proxy enforces 5 predictions/second with burst 10; behind the edge this is
-  an effective shared quota. HTTP redirects to HTTPS.
-- Verified from the developer Mac outside the hosting server and in Chrome's
-  interactive documentation. Raw status evidence: [deployment_verification.json](deployment_verification.json).
-- API container: one CPU, 512 MiB; ingress: 0.25 CPU, 64 MiB. Observed idle memory
-  after startup was about 152 MiB and 2.6 MiB respectively. These are observations,
-  not load-capacity guarantees. No corpus was copied to the server.
+  `29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1`.
+- [CI](https://github.com/EshkirenokCode/tweet-sentiment/actions):
+  30 tests, lint, Docker build/run and HTTP checks passed.
 
-Source and service files live under `/opt/tweet-sentiment`. The API uses an internal
-Docker network and publishes no host ports. A separate virtual-host file and edge
-network connect it to the existing HTTPS proxy. Existing application virtual-host
-checksums, container start times and restart counts were verified unchanged.
-Only the shared edge received a graceful configuration reload; existing application
-containers were not restarted. No database or existing application configuration
-was changed.
+The API has a one-CPU/512-MiB limit; nginx ingress has 0.25 CPU/64 MiB. Observed
+memory after startup was about 125 MiB and 5.6 MiB. Neither container publishes
+host ports; the existing HTTPS edge connects through a dedicated Docker network.
+The effective prediction quota is shared: 5 requests/second, burst 10.
 
-Certificate renewal: `tweet-sentiment-certificate.timer` is enabled with twice-daily
-checks. A full `renew --dry-run` succeeded; the installed oneshot service also exited
-successfully. Renewal updates only this service's certificate and reloads the edge
-after validating nginx configuration. Keys and renewal accounts remain outside Git.
-See [deployment maintenance](../deploy/README.md) for restart/recreation and rollback notes.
+Only this project's API container was recreated for v1.1; its nginx ingress was
+reloaded to resolve the new upstream. Other container start times/restart counts
+and existing application virtual-host checksums were unchanged. No corpus was
+copied to the server.
+
+Certificate renewal runs twice daily through `tweet-sentiment-certificate.timer`.
+The timer is active. v1.1 restores the old certificate pair on nginx validation
+or reload failure; both cases are covered by tests. The Docker Certbot client's
+TLS handshake timed out even though host clients could reach ACME. Certbot now
+runs in its own Python 3.12 environment with pinned dependencies. Reconfiguration
+and a full staging renewal succeeded without changing TLS verification. The
+installed service also exited successfully with its 256-MiB/half-CPU limits.
+Only the systemd timer adds a random delay; Certbot's own delay is disabled.
+Keys and ACME accounts stay
+outside Git. Maintenance and rollback commands are in [deploy/README.md](../deploy/README.md).
+
+External status evidence: [deployment_verification.json](deployment_verification.json).

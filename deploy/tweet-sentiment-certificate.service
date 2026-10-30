@@ -8,3 +8,5 @@ Requires=docker.service
 Type=oneshot
 ExecStart=/opt/tweet-sentiment/app/deploy/renew-certificate.sh
 TimeoutStartSec=300
+MemoryMax=256M
+CPUQuota=50%

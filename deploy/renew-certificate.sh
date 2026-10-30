@@ -16,18 +16,14 @@ exec 9>"$BASE/certificate.lock"
 flock -n 9 || exit 0
 
 if [ "$dry_run" = 1 ]; then
-    set -- renew --dry-run --non-interactive
+    set -- renew --dry-run --non-interactive --no-random-sleep-on-renew
 else
-    set -- renew --quiet --non-interactive
+    set -- renew --quiet --non-interactive --no-random-sleep-on-renew
 fi
 
-docker run --rm --cpus=0.5 --memory=256m \
-    -v "$BASE/tls:/etc/letsencrypt" \
-    -v "$BASE/certbot-work:/var/lib/letsencrypt" \
-    -v "$BASE/certbot-logs:/var/log/letsencrypt" \
-    -v "$ACME_WEBROOT:/acme" \
-    certbot/certbot@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20 \
-    "$@"
+"$BASE/certbot-venv/bin/certbot" "$@" \
+    --config-dir "$BASE/tls" --work-dir "$BASE/certbot-work" \
+    --logs-dir "$BASE/certbot-logs" --webroot-path "$ACME_WEBROOT"
 
 [ "$dry_run" = 0 ] || exit 0
 SOURCE="$BASE/tls/live/tweet-sentiment"

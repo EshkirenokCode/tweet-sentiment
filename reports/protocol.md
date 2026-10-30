@@ -1,4 +1,6 @@
-# Evaluation protocol
+# Evaluation protocol — v1.0
+
+The v1.1 preprocessing corrections are recorded in [protocol-v1.1.md](protocol-v1.1.md).
 
 Fixed before training on 2026-10-28. Seed 42; one CPU thread. Use the official
 TweetEval sentiment train/val/test files at revision

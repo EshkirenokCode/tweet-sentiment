@@ -35,8 +35,8 @@ Its external HTTP checks are recorded in `reports/deployment_verification.json`.
 Source checkout: `/opt/tweet-sentiment/app`. `compose.server.yaml` runs the API
 on an internal Docker network, with nginx ingress on a separate
 `tweet-sentiment-edge` network. No application ports are published on the host.
-The existing edge proxy is attached only to that edge network and uses the
-separate `public-proxy.conf` virtual host for this domain. Existing application
+For this project, the existing edge proxy joins the edge network, not the internal
+API network. It uses a separate `public-proxy.conf` virtual host. Existing application
 virtual-host files remain unchanged. Only a graceful edge reload is needed.
 The inner nginx limits prediction requests to 5/second with a burst of 10;
 behind the edge proxy this is an effective shared limit, not a per-visitor quota.
@@ -47,14 +47,25 @@ docker compose -f deploy/compose.server.yaml up -d --build
 docker network connect tweet-sentiment-edge "$PROXY_CONTAINER"
 ```
 
-Create the domain A record pointing to the server. Issue the initial certificate
-using Certbot 5.8.0 (pinned image digest in `renew-certificate.sh`), `certonly
---webroot -w /acme --cert-name tweet-sentiment -d YOUR_DOMAIN`, with the existing
-edge's ACME webroot mounted at `/acme` and this service's private certificate
-directory at `/etc/letsencrypt`. Validate against staging first. No existing
-listener has to stop. Copy the initial fullchain/key to the directory configured
-as `CERT_DEST` before installing `public-proxy.conf`. Update that file's domain
-and certificate paths if deploying elsewhere. Run `nginx -t` before reloading.
+Create the domain A record pointing to the server. Certbot runs in a separate
+Python 3.12 environment, outside the API image:
+
+```bash
+python3.12 -m venv /opt/tweet-sentiment/certbot-venv
+/opt/tweet-sentiment/certbot-venv/bin/python -m pip install -r deploy/certbot-requirements.lock
+```
+
+Creating the environment requires venv/ensurepip support. Without ensurepip, use
+`venv --without-pip` and bootstrap pip from its official PyPI wheel inside that
+environment; do not install Certbot into the system Python.
+
+Issue the initial certificate with `certonly --webroot -w "$ACME_WEBROOT"
+--cert-name tweet-sentiment -d YOUR_DOMAIN`, using `--config-dir
+/opt/tweet-sentiment/tls`, `--work-dir /opt/tweet-sentiment/certbot-work`, and
+`--logs-dir /opt/tweet-sentiment/certbot-logs`. Validate against staging first.
+Copy the initial fullchain/key to `CERT_DEST` before installing `public-proxy.conf`.
+Update that file's domain and certificate paths for another deployment.
+Run `nginx -t` before reloading; no existing listener needs to stop.
 
 Copy `host.env.example` to `/opt/tweet-sentiment/host.env`, set the three actual
 host paths/container name, and keep it root-owned with mode 600. Certificate keys
@@ -68,9 +79,18 @@ sudo /opt/tweet-sentiment/app/deploy/renew-certificate.sh --dry-run
 sudo systemctl enable --now tweet-sentiment-certificate.timer
 ```
 
-The timer checks twice daily. The renewal script uses a lock and updates only this service's certificate. It
-checks nginx configuration before reloading the edge. If validation or reload fails,
-it restores the previous pair and exits with an error so the next run retries. A simulated renewal was verified after deployment.
+The timer checks twice daily. The renewal script uses a lock and updates only this
+service's certificate. It checks nginx configuration before reloading the edge.
+If validation or reload fails, it restores the previous pair and exits with an error
+so the next run retries. Regression tests cover both failure paths.
+The oneshot service is limited to 256 MiB and half a CPU. The native environment
+replaces the Certbot container, whose TLS connection to ACME timed out on this host.
+Certificate verification remains enabled. Certbot's extra random delay is disabled:
+the systemd timer already adds jitter, and its service has a five-minute timeout.
+When migrating a Docker-issued certificate,
+back up its renewal file, change its absolute certificate paths to the host paths,
+then run `certbot reconfigure --cert-name tweet-sentiment --webroot -w "$ACME_WEBROOT"`
+with the same config/work/log directories. This validates and saves the host webroot.
 
 If the existing edge container is recreated by its own deployment tooling, reconnect
 it to `tweet-sentiment-edge`; Docker preserves the attachment across ordinary

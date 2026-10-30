@@ -19,10 +19,13 @@ def test_certificate_publish_and_rollback(tmp_path, failure):
     )
     binary = tmp_path / "bin"
     binary.mkdir()
+    client = tmp_path / "certbot-venv/bin/certbot"
+    client.parent.mkdir(parents=True)
+    client.write_text("#!/bin/sh\nexit 0\n")
+    client.chmod(0o755)
     docker = binary / "docker"
     docker.write_text(
         "#!/bin/sh\n"
-        'if [ "$1" = run ]; then exit 0; fi\n'
         f'if [ "$(cat "{destination}/fullchain.pem")" = new ]; then\n'
         '  case "$FAILURE:$*" in\n'
         r"    check:*nginx\ -t|reload:*nginx\ -s\ reload) exit 1 ;;"
