@@ -1,5 +1,6 @@
 import argparse
 import json
+import platform
 from pathlib import Path
 
 import numpy as np
@@ -42,6 +43,7 @@ def evaluate(artifact_dir=Path("artifacts"), output=Path("reports/test_metrics.j
     seen = {normalize(x) for s in ("train", "val") for x in splits[s][0]}
     clean = [i for i, text in enumerate(texts) if normalize(text) not in seen]
     result = {
+        "evaluation_environment": {"platform": platform.platform(), "machine": platform.machine()},
         "model_version": metadata["model_version"],
         "artifact_sha256": metadata["sha256"],
         "asset_sha256": metadata.get("assets", {}),

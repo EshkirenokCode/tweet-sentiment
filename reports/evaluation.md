@@ -88,32 +88,39 @@ Per-class results and confusion matrices for every candidate are in
 
 ## Test
 
-Compared with v1.1, accuracy changed from 57.79% to 69.59%
-and macro-F1 from 0.5637 to 0.6924.
-That is 11.80 percentage points of accuracy
-and 1449 additional
+The headline test metrics were measured in the Linux x86-64 deployment container,
+with one CPU thread and batch size 1. Dynamic int8 results vary slightly across
+CPU architectures: the developer's ARM machine scored 69.59% accuracy / 0.6924 F1.
+The server validation macro-F1 is 0.7018 (ARM: 0.7048); 52 of 2,000 validation
+predictions differ. [Platform check](experiments/server_parity.json).
+No weights, checkpoint or precision were changed after this check.
+
+Compared with v1.1, accuracy changed from 57.79% to 69.68%
+and macro-F1 from 0.5637 to 0.6928.
+That is 11.89 percentage points of accuracy
+and 1461 additional
 correct predictions.
 
-Accuracy: **0.695865**. Macro precision: **0.689014**.
-Macro recall: **0.697224**. Macro F1: **0.692425**.
+Accuracy: **0.696841**. Macro precision: **0.691367**.
+Macro recall: **0.695409**. Macro F1: **0.692768**.
 
 | Class | Precision | Recall | F1 | Support |
 | --- | --- | --- | --- | --- |
-| negative | 0.7210 | 0.6850 | 0.7026 | 3972 |
-| neutral | 0.7034 | 0.6980 | 0.7007 | 5937 |
-| positive | 0.6426 | 0.7086 | 0.6740 | 2375 |
+| negative | 0.7256 | 0.6770 | 0.7004 | 3972 |
+| neutral | 0.6995 | 0.7086 | 0.7040 | 5937 |
+| positive | 0.6490 | 0.7006 | 0.6738 | 2375 |
 
 Rows = gold; columns = predicted. Both orders: negative, neutral, positive.
 
 ```text
- 2721  1103   148
- 1005  4144   788
-   48   644  1683
+ 2689  1141   142
+  972  4207   758
+   45   666  1664
 ```
 
-Validation/test macro-F1 gap: 0.0123.
+Validation/test macro-F1 gap: 0.0120.
 Negative recall improved from 0.4439 to
-0.6850. Class balance differs across splits;
+0.6770. Class balance differs across splits;
 context and annotation ambiguity still cause errors. [Error analysis](error_analysis.md).
 Machine-readable results: [test_metrics.json](test_metrics.json).
 

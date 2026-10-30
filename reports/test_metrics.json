@@ -14,45 +14,45 @@
       "neutral",
       "positive"
     ],
-    "accuracy": 0.6958645392380333,
-    "macro_precision": 0.6890144366330145,
-    "macro_recall": 0.6972241722839198,
-    "macro_f1": 0.6924250492751467,
+    "accuracy": 0.696841419732986,
+    "macro_precision": 0.6913668398129266,
+    "macro_recall": 0.6954091806658202,
+    "macro_f1": 0.6927683126383051,
     "per_class": {
       "negative": {
-        "precision": 0.7209856915739269,
-        "recall": 0.6850453172205438,
-        "f1-score": 0.7025561580170411,
+        "precision": 0.7255801403130059,
+        "recall": 0.6769889224572004,
+        "f1-score": 0.7004428236519927,
         "support": 3972.0
       },
       "neutral": {
-        "precision": 0.7034459344763198,
-        "recall": 0.697995620683847,
-        "f1-score": 0.7007101792357119,
+        "precision": 0.699534419687396,
+        "recall": 0.708607040592892,
+        "f1-score": 0.7040415028031127,
         "support": 5937.0
       },
       "positive": {
-        "precision": 0.6426116838487973,
-        "recall": 0.7086315789473684,
-        "f1-score": 0.6740088105726872,
+        "precision": 0.6489859594383776,
+        "recall": 0.7006315789473684,
+        "f1-score": 0.6738206114598096,
         "support": 2375.0
       }
     },
     "confusion_matrix": [
       [
-        2721,
-        1103,
-        148
+        2689,
+        1141,
+        142
       ],
       [
-        1005,
-        4144,
-        788
+        972,
+        4207,
+        758
       ],
       [
-        48,
-        644,
-        1683
+        45,
+        666,
+        1664
       ]
     ]
   },
@@ -63,48 +63,56 @@
       "neutral",
       "positive"
     ],
-    "accuracy": 0.6958645392380333,
-    "macro_precision": 0.6890144366330145,
-    "macro_recall": 0.6972241722839198,
-    "macro_f1": 0.6924250492751467,
+    "accuracy": 0.696841419732986,
+    "macro_precision": 0.6913668398129266,
+    "macro_recall": 0.6954091806658202,
+    "macro_f1": 0.6927683126383051,
     "per_class": {
       "negative": {
-        "precision": 0.7209856915739269,
-        "recall": 0.6850453172205438,
-        "f1-score": 0.7025561580170411,
+        "precision": 0.7255801403130059,
+        "recall": 0.6769889224572004,
+        "f1-score": 0.7004428236519927,
         "support": 3972.0
       },
       "neutral": {
-        "precision": 0.7034459344763198,
-        "recall": 0.697995620683847,
-        "f1-score": 0.7007101792357119,
+        "precision": 0.699534419687396,
+        "recall": 0.708607040592892,
+        "f1-score": 0.7040415028031127,
         "support": 5937.0
       },
       "positive": {
-        "precision": 0.6426116838487973,
-        "recall": 0.7086315789473684,
-        "f1-score": 0.6740088105726872,
+        "precision": 0.6489859594383776,
+        "recall": 0.7006315789473684,
+        "f1-score": 0.6738206114598096,
         "support": 2375.0
       }
     },
     "confusion_matrix": [
       [
-        2721,
-        1103,
-        148
+        2689,
+        1141,
+        142
       ],
       [
-        1005,
-        4144,
-        788
+        972,
+        4207,
+        758
       ],
       [
-        48,
-        644,
-        1683
+        45,
+        666,
+        1664
       ]
     ]
   },
   "excluded_overlap_rows": 0,
-  "empty_policy": "Official metrics include every row; API rejects empty normalized inputs."
+  "empty_policy": "Official metrics include every row; API rejects empty normalized inputs.",
+  "evaluation_environment": {
+    "platform": "Linux deployment container",
+    "machine": "x86_64",
+    "cpu_threads": 1,
+    "batch_size": 1,
+    "runtime": "onnxruntime 1.31.1",
+    "method": "Inputs streamed through SSH to temporary canary; no raw corpus files persisted on server."
+  }
 }

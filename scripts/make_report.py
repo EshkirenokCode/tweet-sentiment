@@ -160,6 +160,13 @@ Per-class results and confusion matrices for every candidate are in
 
 ## Test
 
+The headline test metrics were measured in the Linux x86-64 deployment container,
+with one CPU thread and batch size 1. Dynamic int8 results vary slightly across
+CPU architectures: the developer's ARM machine scored 69.59% accuracy / 0.6924 F1.
+The server validation macro-F1 is 0.7018 (ARM: 0.7048); 52 of 2,000 validation
+predictions differ. [Platform check](experiments/server_parity.json).
+No weights, checkpoint or precision were changed after this check.
+
 Compared with v1.1, accuracy changed from {baseline["accuracy"]:.2%} to {test["accuracy"]:.2%}
 and macro-F1 from {baseline["macro_f1"]:.4f} to {test["macro_f1"]:.4f}.
 That is {(test["accuracy"] - baseline["accuracy"]) * 100:.2f} percentage points of accuracy

@@ -1,0 +1,58 @@
+{
+  "validation_count": 2000,
+  "different_predictions": 52,
+  "server_validation": {
+    "count": 2000,
+    "label_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "accuracy": 0.723,
+    "macro_precision": 0.7227037048355388,
+    "macro_recall": 0.6886436933905289,
+    "macro_f1": 0.7017696937864115,
+    "per_class": {
+      "negative": {
+        "precision": 0.7,
+        "recall": 0.5608974358974359,
+        "f1-score": 0.6227758007117438,
+        "support": 312.0
+      },
+      "neutral": {
+        "precision": 0.6744186046511628,
+        "recall": 0.7675489067894131,
+        "f1-score": 0.7179763186221744,
+        "support": 869.0
+      },
+      "positive": {
+        "precision": 0.7936925098554534,
+        "recall": 0.7374847374847375,
+        "f1-score": 0.7645569620253164,
+        "support": 819.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        175,
+        118,
+        19
+      ],
+      [
+        64,
+        667,
+        138
+      ],
+      [
+        11,
+        204,
+        604
+      ]
+    ]
+  },
+  "model_asset_sha256": {
+    "encoder/model.onnx": "87f7be9b92440eb90992f11475f052a9934923728f2a67311f6dbb41d24af8c6",
+    "encoder/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+  },
+  "method": "Validation texts streamed over SSH to canary process; no corpus files stored on server."
+}

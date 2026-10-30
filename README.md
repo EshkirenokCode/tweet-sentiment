@@ -10,10 +10,12 @@ Author: Ilia Gulevskii.
 | Version | Model | Test accuracy | Macro-F1 |
 | --- | --- | --- | --- |
 | v1.1 | Word TF-IDF + LinearSVC | 57.79% | 0.5637 |
-| v1.2 | Fine-tuned MiniLM, int8 | **69.59%** | **0.6924** |
+| v1.2 | Fine-tuned MiniLM, int8 | **69.68%** | **0.6928** |
 
 Both use the same 12,284-example official test split. This test was inspected in
 previous versions; v1.2 is a repeat measurement. Selection used validation only.
+v1.2 figures use the Linux x86-64 serving container; ARM int8 inference gives
+69.59% / 0.6924. [Platform check](reports/experiments/server_parity.json).
 
 ## Run
 

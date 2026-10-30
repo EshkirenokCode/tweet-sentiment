@@ -1,0 +1,110 @@
+{
+  "model_version": "1.2.0",
+  "artifact_sha256": "607d4ca17d8bde0b2209abacd6adc82c2333c098f4b20edf25fb642d7196eeec",
+  "asset_sha256": {
+    "encoder/model.onnx": "87f7be9b92440eb90992f11475f052a9934923728f2a67311f6dbb41d24af8c6",
+    "encoder/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+  },
+  "metadata_sha256": "218d7a5502904918a049956886747694064611de5ce551fd84f6a5f59a8c16e8",
+  "data_manifest_sha256": "d01a95d44d4e2d7bdd89ea11d5267d10c4b45b5b94a245d20783ba441f9158ad",
+  "official": {
+    "count": 12284,
+    "label_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "accuracy": 0.6958645392380333,
+    "macro_precision": 0.6890144366330145,
+    "macro_recall": 0.6972241722839198,
+    "macro_f1": 0.6924250492751467,
+    "per_class": {
+      "negative": {
+        "precision": 0.7209856915739269,
+        "recall": 0.6850453172205438,
+        "f1-score": 0.7025561580170411,
+        "support": 3972.0
+      },
+      "neutral": {
+        "precision": 0.7034459344763198,
+        "recall": 0.697995620683847,
+        "f1-score": 0.7007101792357119,
+        "support": 5937.0
+      },
+      "positive": {
+        "precision": 0.6426116838487973,
+        "recall": 0.7086315789473684,
+        "f1-score": 0.6740088105726872,
+        "support": 2375.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        2721,
+        1103,
+        148
+      ],
+      [
+        1005,
+        4144,
+        788
+      ],
+      [
+        48,
+        644,
+        1683
+      ]
+    ]
+  },
+  "unseen_normalized": {
+    "count": 12284,
+    "label_order": [
+      "negative",
+      "neutral",
+      "positive"
+    ],
+    "accuracy": 0.6958645392380333,
+    "macro_precision": 0.6890144366330145,
+    "macro_recall": 0.6972241722839198,
+    "macro_f1": 0.6924250492751467,
+    "per_class": {
+      "negative": {
+        "precision": 0.7209856915739269,
+        "recall": 0.6850453172205438,
+        "f1-score": 0.7025561580170411,
+        "support": 3972.0
+      },
+      "neutral": {
+        "precision": 0.7034459344763198,
+        "recall": 0.697995620683847,
+        "f1-score": 0.7007101792357119,
+        "support": 5937.0
+      },
+      "positive": {
+        "precision": 0.6426116838487973,
+        "recall": 0.7086315789473684,
+        "f1-score": 0.6740088105726872,
+        "support": 2375.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        2721,
+        1103,
+        148
+      ],
+      [
+        1005,
+        4144,
+        788
+      ],
+      [
+        48,
+        644,
+        1683
+      ]
+    ]
+  },
+  "excluded_overlap_rows": 0,
+  "empty_policy": "Official metrics include every row; API rejects empty normalized inputs."
+}
