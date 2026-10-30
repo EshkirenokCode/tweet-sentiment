@@ -10,11 +10,10 @@
       "internal_api": "openmp",
       "num_threads": 1,
       "prefix": "libomp",
-      "filepath": "/Users/ilya/Documents/ChatGPT/tweet-sentiment/.venv/lib/python3.12/site-packages/sklearn/.dylibs/libomp.dylib",
       "version": null
     }
   ],
-  "model_sha256": "2f0278b7a3b346cc2da6f096d2321e14a775fd20d589ac199edbe43643e68a2f",
+  "model_sha256": "29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1",
   "dependencies": {
     "scikit-learn": "1.9.1",
     "numpy": "2.5.4",
@@ -22,16 +21,16 @@
     "joblib": "1.6.0",
     "threadpoolctl": "3.7.0"
   },
-  "artifact_bytes": 2304931,
-  "final_train_seconds": 1.3551396660041064,
+  "artifact_bytes": 2304780,
+  "final_train_seconds": 1.3321856249822304,
   "in_process": {
-    "p50_ms": 0.18708300194703043,
-    "p95_ms": 0.1974621176486835,
+    "p50_ms": 0.17947901505976915,
+    "p95_ms": 0.19296639366075397,
     "measurements": 500
   },
   "http_loopback": {
-    "p50_ms": 0.7079790229909122,
-    "p95_ms": 0.8452163572655991,
+    "p50_ms": 0.7346250349655747,
+    "p95_ms": 0.9116708301007743,
     "measurements": 500
   },
   "http_notes": "One uvicorn worker, keep-alive, sequential requests, loopback."

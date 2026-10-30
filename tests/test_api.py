@@ -5,7 +5,7 @@ import joblib
 import pytest
 from fastapi.testclient import TestClient
 
-from tweet_sentiment import LABELS
+from tweet_sentiment import LABELS, __version__
 from tweet_sentiment.api import create_app
 from tweet_sentiment.artifact import versions
 from tweet_sentiment.data import sha256
@@ -41,7 +41,7 @@ def test_success_and_docs(artifact):
         assert client.get("/docs").status_code == 200
         schema = client.get("/openapi.json").json()
         assert schema["components"]["schemas"]["PredictionResponse"]["examples"] == [
-            {"label": "positive", "model_version": "1.0.0"}
+            {"label": "positive", "model_version": __version__}
         ]
 
 

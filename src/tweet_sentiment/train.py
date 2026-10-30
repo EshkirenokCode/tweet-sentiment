@@ -8,7 +8,7 @@ from time import perf_counter
 import joblib
 from threadpoolctl import threadpool_limits
 
-from tweet_sentiment import LABELS
+from tweet_sentiment import LABELS, __version__
 from tweet_sentiment.artifact import versions
 from tweet_sentiment.data import MANIFEST, sha256, verify, write_json
 from tweet_sentiment.evaluate import metrics
@@ -51,7 +51,7 @@ def train(config_path=Path("configs/experiment.json"), artifact_dir=Path("artifa
     artifact_dir.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, artifact_dir / "model.joblib", compress=3)
     metadata = {
-        "model_version": "1.0.0",
+        "model_version": __version__,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "sha256": sha256(artifact_dir / "model.joblib"),
         "labels": LABELS,

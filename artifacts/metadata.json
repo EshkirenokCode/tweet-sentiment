@@ -1,7 +1,7 @@
 {
-  "model_version": "1.0.0",
-  "created_at": "2026-10-28T09:54:18.257416+00:00",
-  "sha256": "2f0278b7a3b346cc2da6f096d2321e14a775fd20d589ac199edbe43643e68a2f",
+  "model_version": "1.1.0",
+  "created_at": "2026-10-30T08:55:45.456524+00:00",
+  "sha256": "29cc3e5ee08500693bc09c8f3d07de69ac1ec678431967d257fb170723fc42f1",
   "labels": [
     "negative",
     "neutral",
@@ -16,6 +16,7 @@
   },
   "experiment": {
     "seed": 42,
+    "preprocessing_version": 2,
     "selection_metric": "validation.macro_f1",
     "training_split": "train",
     "refit_with_validation": false,
@@ -83,7 +84,7 @@
       }
     ]
   },
-  "experiment_sha256": "6285dc68ec843dff9529be43a559d2182e63d5bf66f63b39bbf3ce0575f09aad",
+  "experiment_sha256": "207b823a3701eab28e0df56458da4dd637e034f74be2a5c49917b5bff22cd121",
   "data_manifest_sha256": "d01a95d44d4e2d7bdd89ea11d5267d10c4b45b5b94a245d20783ba441f9158ad",
   "dependencies": {
     "scikit-learn": "1.9.1",
@@ -96,6 +97,6 @@
   "python": "3.12.14",
   "platform": "macOS-26.6.2-arm64-arm-64bit",
   "training_threads": 1,
-  "final_train_seconds": 1.3551396660041064,
-  "artifact_bytes": 2304931
+  "final_train_seconds": 1.3321856249822304,
+  "artifact_bytes": 2304780
 }

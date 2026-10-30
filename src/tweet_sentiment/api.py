@@ -9,9 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from starlette.responses import JSONResponse, RedirectResponse
 from threadpoolctl import threadpool_limits
 
-from tweet_sentiment import LABELS
+from tweet_sentiment import LABELS, __version__
 from tweet_sentiment.artifact import load_artifact
-from tweet_sentiment.preprocessing import normalize
 
 MAX_BODY_BYTES = 8192
 
@@ -65,7 +64,7 @@ class PredictionRequest(BaseModel):
 
 class PredictionResponse(BaseModel):
     model_config = ConfigDict(
-        json_schema_extra={"examples": [{"label": "positive", "model_version": "1.0.0"}]}
+        json_schema_extra={"examples": [{"label": "positive", "model_version": __version__}]}
     )
     label: Literal["negative", "neutral", "positive"]
     model_version: str
@@ -87,7 +86,7 @@ def create_app(artifact_dir=None):
 
     app = FastAPI(
         title="Tweet sentiment",
-        version="1.0.0",
+        version=__version__,
         lifespan=lifespan,
         description="Three-class sentiment for English text. No calibrated confidence.",
     )
@@ -118,8 +117,7 @@ def create_app(artifact_dir=None):
     )
     def predict(request: PredictionRequest):
         ready()
-        remove = app.state.metadata["config"]["remove_stopwords"]
-        if not normalize(request.text, remove):
+        if not app.state.model.named_steps["normalize"].transform([request.text])[0]:
             raise HTTPException(422, "Text contains no usable tokens after normalization")
         label = int(app.state.model.predict([request.text])[0])
         return {"label": LABELS[label], "model_version": app.state.metadata["model_version"]}

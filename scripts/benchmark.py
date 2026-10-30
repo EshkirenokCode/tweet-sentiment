@@ -53,7 +53,10 @@ if __name__ == "__main__":
             "batch_size": 1,
             "warmup": 30,
             "threads": 1,
-            "threadpools": threadpool_info(),
+            "threadpools": [
+                {key: value for key, value in pool.items() if key != "filepath"}
+                for pool in threadpool_info()
+            ],
             "model_sha256": metadata["sha256"],
             "dependencies": metadata["dependencies"],
             "artifact_bytes": metadata["artifact_bytes"],

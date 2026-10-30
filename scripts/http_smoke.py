@@ -2,6 +2,8 @@ import argparse
 
 import httpx
 
+from tweet_sentiment import __version__
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", required=True)
@@ -14,12 +16,12 @@ if __name__ == "__main__":
         assert client.get("/docs").status_code == 200
         schema = client.get("/openapi.json").json()
         assert schema["components"]["schemas"]["PredictionResponse"]["examples"] == [
-            {"label": "positive", "model_version": "1.0.0"}
+            {"label": "positive", "model_version": __version__}
         ]
         response = client.post("/predict", json={"text": "I love this wonderful app!"})
         response.raise_for_status()
         assert response.json()["label"] in ("negative", "neutral", "positive")
-        assert response.json()["model_version"] == "1.0.0"
+        assert response.json()["model_version"] == __version__
         assert client.post("/predict", json={"text": " "}).status_code == 422
         assert client.post("/predict", json={"text": 123}).status_code == 422
         assert client.post("/predict", json={"text": "x" * 2001}).status_code == 422

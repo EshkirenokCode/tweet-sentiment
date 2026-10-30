@@ -1,5 +1,6 @@
 {
   "seed": 42,
+  "preprocessing_version": 2,
   "selection_metric": "validation.macro_f1",
   "training_split": "train",
   "refit_with_validation": false,

@@ -1,17 +1,18 @@
 # Tweet sentiment
 
 English text classification into `negative`, `neutral`, or `positive`.
-Word TF-IDF + LinearSVC, trained on the official TweetEval sentiment train split.
-Author: Ilia Gulevskii.
+Word TF-IDF + LinearSVC on TweetEval sentiment. Author: Ilia Gulevskii.
 
-Validation macro-F1: **0.6604**. Official test: **57.73% accuracy**, **0.5631 macro-F1**
-(12,284 examples). The validation/test gap is material; negative recall is 0.4434.
-See the [evaluation report](reports/evaluation.md) and [error analysis](reports/error_analysis.md).
+[Live API](https://tweet-sentiment.gulevskii.dev/docs) ·
+[Evaluation](reports/evaluation.md) · [Data source and conditions](DATA.md)
+
+v1.1.0: validation macro-F1 **0.6592**; test accuracy **57.79%**, macro-F1 **0.5637**
+on 12,284 examples. Negative recall is **0.4439**. This revision fixes preprocessing
+and repeats evaluation on the test already inspected in v1.0; it is not a fresh holdout.
 
 ## Run
 
-Python 3.12. The evaluated model is committed in `artifacts/`; no dataset download
-or training is required to serve it. Install the exact dependency lock first.
+Python 3.12. The trained model is in `artifacts/`; serving needs no data download.
 
 ```bash
 python3.12 -m venv .venv
@@ -26,23 +27,16 @@ curl -H 'Content-Type: application/json' \
   -d '{"text":"I love this wonderful app!"}' http://127.0.0.1:8000/predict
 ```
 
-Response: `{"label":"positive","model_version":"1.0.0"}`.
-`GET /health` checks the process; `GET /ready` returns 503 if the model cannot load.
-Interactive documentation: `http://127.0.0.1:8000/docs`.
-The API rejects invalid/blank/normalization-empty input, strings over 2000 characters,
-and HTTP bodies over 8192 bytes. Labels have no calibrated confidence.
-
-Public HTTPS API: **https://tweet-sentiment.gulevskii.dev**.
-[Interactive API docs](https://tweet-sentiment.gulevskii.dev/docs).
-The loopback URL above is for local development.
-[Deployment instructions and limits](deploy/README.md), [verification status](reports/deployment.md).
+Response: `{"label":"positive","model_version":"1.1.0"}`.
+`/` opens `/docs`; `/health` checks the process and `/ready` checks the model.
+Invalid, blank or normalization-empty text returns 422. The limits are 2000 text
+characters and 8192 HTTP-body bytes. The response contains no confidence estimate.
 
 ## Reproduce
 
-[Protocol](reports/protocol.md) and [seven configurations](configs/experiment.json)
-were fixed before experiments. Vocabulary, IDF and classifier fit train only;
-validation selects the model; test is evaluated after selection. Seed 42, one thread.
-The selected stop word removal preserves negations and outperformed keeping stop words.
+Seven fixed configurations, seed 42; selection by validation macro-F1. Vocabulary,
+IDF and classifier fit train only. The final model is also trained on train only.
+[Original protocol](reports/protocol.md), [v1.1 changes](reports/protocol-v1.1.md).
 
 ```bash
 python -m tweet_sentiment.data download
@@ -53,13 +47,12 @@ python -m tweet_sentiment.evaluate --artifact-dir artifacts/reproduced \
   --output reports/reproduced_test_metrics.json
 ```
 
-The default train/evaluate commands refuse to overwrite the published artifact or
-test metrics. Reproduction writes separate outputs; tiny numerical differences across
-platforms are possible. Downloads use a pinned upstream commit and verified SHA-256.
-Official split sizes: 45,615 / 2,000 / 12,284. No raw corpus is committed.
-There are 7 normalized train/validation overlaps and none between train/test;
-all rows are retained and duplicate/label conflicts are [reported](reports/data_audit.json).
-See [provenance and data conditions](DATA.md) before using or redistributing data.
+Download uses a pinned source commit and checksums. Split sizes are
+45,615 / 2,000 / 12,284. Raw data is not committed. Duplicates, conflicting labels,
+empty texts and split overlaps are counted in [data_audit.json](reports/data_audit.json).
+Training and evaluation refuse to overwrite existing artifacts/results.
+
+## Checks
 
 ```bash
 pytest -q
@@ -70,26 +63,17 @@ python scripts/benchmark.py
 python scripts/make_report.py
 ```
 
-Benchmark: 500 batch-one measurements after warmup, separately in process and over
-local HTTP. Apple M4 Pro: about 0.19 ms / 0.71 ms p50 respectively; not a hosting SLA.
-CI runs lint, tests and a Docker build/HTTP smoke test without downloading the corpus.
+The benchmark uses 30 warmups and 500 batch-one calls, separately in process and
+over local HTTP. CI runs tests, lint and a Docker build/HTTP check without the corpus.
+[Deployment and maintenance](deploy/README.md), [deployment checks](reports/deployment.md).
 
 ## Limits
 
-English only; no language detection. Sparse n-grams miss sarcasm, negation scope,
-mixed sentiment, entity-specific stance and conversational context. Label balance
-differs across splits. The test set has been inspected for error analysis; any later
-improvements must disclose its reuse. Load only the trusted repository artifact:
-joblib is executable serialization, and its checksum is a corruption check, not authentication.
+English only; no language detection. Local word patterns miss sarcasm, negation
+scope and conversational context. The validation/test gap is about 0.10 macro-F1.
+See the [18 sampled errors](reports/error_analysis.md) and [model notes](reports/model_notes.md).
+Future improvements need a new holdout or disclosure of further test reuse.
 
-The frozen v1 preprocessing expands `can't`, `won't` and other `n't` forms, but
-does not expand `cannot` (which the stop word list removes). Some letter emoticons
-such as `:D` are lost after lowercasing. These are known baseline limitations;
-correcting them requires a new trained model and a disclosed repeat evaluation,
-not a silent preprocessing change to this published artifact.
-
-[Interview notes](reports/interview.md) and a [short submission text](reports/application.txt)
-are included. Nothing has been sent to the employer.
-
-[Final v1.0.0 review](reports/final_review.md) records reproduction, deployment
-verification and the known limits of this portfolio baseline.
+Only load the repository's trusted joblib artifact: deserialization executes code.
+Its checksum detects corruption, not malicious replacement. No tweet corpus or
+private server files are included. v1.0 code and results remain at tag `v1.0.0`.

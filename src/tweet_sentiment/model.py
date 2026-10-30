@@ -35,13 +35,18 @@ def build_model(candidate, config):
         classifier = LogisticRegression(
             C=candidate["C"], max_iter=1000, random_state=config["seed"]
         )
-    else:
+    elif kind == "svc":
         classifier = LinearSVC(
             C=candidate["C"], dual=True, max_iter=5000, random_state=config["seed"]
         )
+    else:
+        raise ValueError(f"Unknown classifier kind: {kind}")
     return Pipeline(
         [
-            ("normalize", TextNormalizer(candidate["remove_stopwords"])),
+            (
+                "normalize",
+                TextNormalizer(candidate["remove_stopwords"], config["preprocessing_version"]),
+            ),
             ("tfidf", features),
             ("classifier", classifier),
         ]

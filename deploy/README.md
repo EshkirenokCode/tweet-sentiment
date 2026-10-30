@@ -1,7 +1,7 @@
 # Deployment
 
 The image includes the evaluated artifact; startup never downloads data or trains.
-Use a separate host or managed Docker service. No existing MAYAK services are needed.
+Use an isolated Compose project or a managed Docker service.
 
 ```bash
 docker build -t tweet-sentiment .
@@ -68,10 +68,9 @@ sudo /opt/tweet-sentiment/app/deploy/renew-certificate.sh --dry-run
 sudo systemctl enable --now tweet-sentiment-certificate.timer
 ```
 
-The timer checks twice daily. The renewal script uses a lock, updates only this
-service's certificate, checks nginx configuration, and gracefully reloads the edge
-only when the certificate changes. The previous certificate pair is retained for
-rollback. A simulated renewal was verified after deployment.
+The timer checks twice daily. The renewal script uses a lock and updates only this service's certificate. It
+checks nginx configuration before reloading the edge. If validation or reload fails,
+it restores the previous pair and exits with an error so the next run retries. A simulated renewal was verified after deployment.
 
 If the existing edge container is recreated by its own deployment tooling, reconnect
 it to `tweet-sentiment-edge`; Docker preserves the attachment across ordinary
