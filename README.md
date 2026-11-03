@@ -44,7 +44,7 @@ The API returns no calibrated confidence score.
 API release **1.2.1** serves the unchanged **1.2.0 model**. `GET /model` reports
 both versions, the expected language, labels and input limits. Validation errors
 return field locations and explanations without echoing submitted values.
-Malformed Unicode and non-finite numeric inputs return 422.
+Unpaired Unicode surrogate escapes and non-finite numeric inputs return 422.
 
 ## Training
 
