@@ -40,9 +40,13 @@ def test_success_and_docs(artifact):
         assert response.json() == {"label": "positive", "model_version": "test"}
         assert client.get("/docs").status_code == 200
         schema = client.get("/openapi.json").json()
-        assert schema["components"]["schemas"]["PredictionResponse"]["examples"] == [
-            {"label": "positive", "model_version": __version__}
-        ]
+        assert schema["info"]["version"] == __version__
+        assert response.json()["model_version"] != schema["info"]["version"]
+        info = client.get("/model").json()
+        assert info["api_version"] == __version__
+        assert info["model_version"] == "test"
+        assert info["labels"] == LABELS
+        assert info["max_tokens"] is None
 
 
 @pytest.mark.parametrize(
@@ -92,4 +96,36 @@ def test_unavailable_model(artifact, failure):
     with TestClient(create_app(artifact)) as client:
         assert client.get("/health").status_code == 200
         assert client.get("/ready").status_code == 503
+        assert client.get("/model").status_code == 503
         assert client.post("/predict", json={"text": "good"}).status_code == 503
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        b'{"text":NaN}',
+        b'{"text":Infinity}',
+        b'{"text":-Infinity}',
+        b'{"text":"\\ud800"}',
+        b'{"text":"\\udfff"}',
+        b'{"text":"good","\\ud800":true}',
+    ],
+)
+def test_unencodable_validation_input_returns_422(artifact, body):
+    with TestClient(create_app(artifact)) as client:
+        response = client.post(
+            "/predict", content=body, headers={"content-type": "application/json"}
+        )
+        assert response.status_code == 422
+        assert response.json()["detail"]
+        assert all(
+            "input" not in error and "ctx" not in error for error in response.json()["detail"]
+        )
+
+
+def test_validation_does_not_echo_submitted_text(artifact):
+    text = "private-message-" * 150
+    with TestClient(create_app(artifact)) as client:
+        response = client.post("/predict", json={"text": text})
+        assert response.status_code == 422
+        assert text not in response.text

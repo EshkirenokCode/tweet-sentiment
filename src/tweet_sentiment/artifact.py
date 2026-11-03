@@ -7,6 +7,7 @@ import joblib
 
 from tweet_sentiment import LABELS
 from tweet_sentiment.data import sha256
+from tweet_sentiment.onnx_classifier import OnnxClassifier
 
 PACKAGES = ["scikit-learn", "numpy", "scipy", "joblib", "threadpoolctl"]
 
@@ -33,7 +34,13 @@ def load_artifact(directory=Path("artifacts")):
     model = joblib.load(directory / "model.joblib")
     if list(model.classes_) != [0, 1, 2] or metadata["labels"] != LABELS:
         raise ValueError("Artifact label mapping mismatch")
-    if metadata.get("assets"):
-        model.named_steps["classifier"].set_params(directory=str(directory / "encoder"))
+    classifier = model.named_steps["classifier"]
+    if isinstance(classifier, OnnxClassifier):
+        required = {"encoder/model.onnx", "encoder/tokenizer.json"}
+        if not required <= metadata.get("assets", {}).keys():
+            raise ValueError("ONNX artifact must declare checksums for model and tokenizer")
+        if not {"onnxruntime", "tokenizers"} <= metadata["dependencies"].keys():
+            raise ValueError("ONNX artifact dependency metadata is incomplete")
+        classifier.set_params(directory=str(directory / "encoder"))
         model.predict(["The service is ready."])
     return model, metadata

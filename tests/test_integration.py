@@ -24,6 +24,11 @@ def test_real_artifact():
     expected = model.predict(examples)
     with TestClient(create_app()) as client:
         assert client.get("/ready").status_code == 200
+        info = client.get("/model").json()
+        assert info["max_tokens"] == 256
+        assert info["max_characters"] == 2000
+        assert info["max_body_bytes"] == 8192
+        assert info["model_version"] == metadata["model_version"]
         for text, label in zip(examples, expected, strict=True):
             response = client.post("/predict", json={"text": text})
             assert response.status_code == 200
@@ -72,4 +77,19 @@ def test_corrupt_encoder_is_not_ready(tmp_path):
     (tmp_path / "metadata.json").write_text(json.dumps(metadata))
     with TestClient(create_app(tmp_path)) as client:
         assert client.get("/health").status_code == 200
+        assert client.get("/ready").status_code == 503
+
+
+@pytest.mark.integration
+def test_onnx_missing_asset_manifest_is_not_ready(tmp_path):
+    import json
+    import shutil
+
+    shutil.copyfile("artifacts/model.joblib", tmp_path / "model.joblib")
+    metadata = json.loads(Path("artifacts/metadata.json").read_text())
+    metadata["assets"] = {}
+    (tmp_path / "metadata.json").write_text(json.dumps(metadata))
+    with pytest.raises(ValueError, match="must declare checksums"):
+        load_artifact(tmp_path)
+    with TestClient(create_app(tmp_path)) as client:
         assert client.get("/ready").status_code == 503

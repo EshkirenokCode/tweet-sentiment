@@ -6,6 +6,8 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 
 from tweet_sentiment.encoder import TokenLimitError
 
+_LOAD_LOCK = threading.Lock()
+
 
 class OnnxClassifier(ClassifierMixin, BaseEstimator):
     def __init__(self, directory="artifacts/encoder", batch_size=1, threads=1, max_tokens=256):
@@ -25,6 +27,11 @@ class OnnxClassifier(ClassifierMixin, BaseEstimator):
     def _load(self):
         if hasattr(self, "session_"):
             return
+        with _LOAD_LOCK:
+            if not hasattr(self, "session_"):
+                self._initialize()
+
+    def _initialize(self):
         import onnxruntime as ort
         from tokenizers import Tokenizer
 
@@ -33,18 +40,22 @@ class OnnxClassifier(ClassifierMixin, BaseEstimator):
         options.inter_op_num_threads = 1
         options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         path = Path(self.directory)
-        self.session_ = ort.InferenceSession(
+        session = ort.InferenceSession(
             str(path / "model.onnx"), options, providers=["CPUExecutionProvider"]
         )
-        self.tokenizer_ = Tokenizer.from_file(str(path / "tokenizer.json"))
-        self.tokenizer_.no_truncation()
-        self.tokenizer_.enable_padding(pad_id=0, pad_token="[PAD]")
+        tokenizer = Tokenizer.from_file(str(path / "tokenizer.json"))
+        tokenizer.no_truncation()
+        tokenizer.enable_padding(pad_id=0, pad_token="[PAD]")
+        self.tokenizer_ = tokenizer
         self.lock_ = threading.Lock()
+        self.session_ = session
 
     def fit(self, X, y=None):
         raise RuntimeError("Fine-tune weights with experiments/finetune_minilm.py")
 
     def decision_function(self, X):
+        if len(X) == 0:
+            return np.empty((0, 3), dtype=np.float32)
         self._load()
         rows = []
         for start in range(0, len(X), self.batch_size):

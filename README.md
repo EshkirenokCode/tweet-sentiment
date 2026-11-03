@@ -41,6 +41,11 @@ Limits: 2000 characters, 256 model tokens and 8192 HTTP-body bytes. Token-overfl
 inputs are rejected, never silently truncated. Invalid/empty input returns 422.
 The API returns no calibrated confidence score.
 
+API release **1.2.1** serves the unchanged **1.2.0 model**. `GET /model` reports
+both versions, the expected language, labels and input limits. Validation errors
+return field locations and explanations without echoing submitted values.
+Malformed Unicode and non-finite numeric inputs return 422.
+
 ## Training
 
 The source is the general `sentence-transformers/all-MiniLM-L6-v2` encoder,

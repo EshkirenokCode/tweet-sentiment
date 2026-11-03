@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from starlette.responses import JSONResponse, RedirectResponse
 from threadpoolctl import threadpool_limits
@@ -14,6 +15,7 @@ from tweet_sentiment.artifact import load_artifact
 from tweet_sentiment.encoder import TokenLimitError
 
 MAX_BODY_BYTES = 8192
+MAX_TEXT_CHARACTERS = 2000
 
 
 class BodyLimit:
@@ -28,10 +30,11 @@ class BodyLimit:
             message = await receive()
             if message["type"] == "http.disconnect":
                 return
-            body.extend(message.get("body", b""))
-            if len(body) > self.limit:
-                response = JSONResponse({"detail": "Request body exceeds 8192 bytes"}, 413)
+            chunk = message.get("body", b"")
+            if len(body) + len(chunk) > self.limit:
+                response = JSONResponse({"detail": f"Request body exceeds {self.limit} bytes"}, 413)
                 return await response(scope, receive, send)
+            body.extend(chunk)
             if not message.get("more_body", False):
                 break
         delivered = False
@@ -50,7 +53,7 @@ class PredictionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     text: str = Field(
         min_length=1,
-        max_length=2000,
+        max_length=MAX_TEXT_CHARACTERS,
         description="English text; at most 2000 characters and 256 model tokens.",
         examples=["The update works really well."],
     )
@@ -64,11 +67,21 @@ class PredictionRequest(BaseModel):
 
 
 class PredictionResponse(BaseModel):
-    model_config = ConfigDict(
-        json_schema_extra={"examples": [{"label": "positive", "model_version": __version__}]}
-    )
     label: Literal["negative", "neutral", "positive"]
+    model_version: str = Field(
+        description="Loaded model artifact version, independent of API version"
+    )
+
+
+class ModelInfo(BaseModel):
+    api_version: str
     model_version: str
+    language: Literal["en"]
+    labels: list[str]
+    max_characters: int
+    max_tokens: int | None
+    max_body_bytes: int
+    calibrated_confidence: bool
 
 
 def create_app(artifact_dir=None):
@@ -93,6 +106,31 @@ def create_app(artifact_dir=None):
     )
     app.add_middleware(BodyLimit)
 
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request, error):
+        # Do not echo submitted values: NaN and lone surrogates cannot be encoded
+        # by JSONResponse, and prediction text does not belong in error responses.
+        def safe(value):
+            return (
+                value.encode("utf-8", errors="replace").decode("utf-8")
+                if isinstance(value, str)
+                else value
+            )
+
+        return JSONResponse(
+            status_code=422,
+            content={
+                "detail": [
+                    {
+                        "type": safe(item["type"]),
+                        "loc": [safe(x) for x in item["loc"]],
+                        "msg": safe(item["msg"]),
+                    }
+                    for item in error.errors()
+                ]
+            },
+        )
+
     @app.get("/", include_in_schema=False)
     def index():
         return RedirectResponse("/docs")
@@ -106,6 +144,22 @@ def create_app(artifact_dir=None):
         if app.state.model is None:
             raise HTTPException(503, "Model artifact unavailable or incompatible")
         return {"status": "ready", "model_version": app.state.metadata["model_version"]}
+
+    @app.get(
+        "/model", response_model=ModelInfo, responses={503: {"description": "Model unavailable"}}
+    )
+    def model_info():
+        ready()
+        return {
+            "api_version": __version__,
+            "model_version": app.state.metadata["model_version"],
+            "language": "en",
+            "labels": LABELS,
+            "max_characters": MAX_TEXT_CHARACTERS,
+            "max_tokens": getattr(app.state.model.named_steps["classifier"], "max_tokens", None),
+            "max_body_bytes": MAX_BODY_BYTES,
+            "calibrated_confidence": False,
+        }
 
     @app.post(
         "/predict",
