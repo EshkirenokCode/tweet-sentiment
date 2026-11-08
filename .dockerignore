@@ -4,6 +4,8 @@
 !src/
 !src/tweet_sentiment/
 !src/tweet_sentiment/*.py
+!src/tweet_sentiment/ui/
+!src/tweet_sentiment/ui/*
 !artifacts/
 !artifacts/model.joblib
 !artifacts/metadata.json

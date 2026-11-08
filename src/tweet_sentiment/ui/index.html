@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Check the sentiment of an English tweet.">
+  <title>Tweet sentiment</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <script src="/assets/site.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <span>Ilia Gulevskii</span>
+    <nav aria-label="Project links">
+      <a href="/docs">API docs</a>
+      <a href="https://github.com/EshkirenokCode/tweet-sentiment">GitHub</a>
+    </nav>
+  </header>
+  <main>
+    <div class="intro">
+      <h1>Tweet sentiment</h1>
+      <p>Paste an English tweet to see whether the model reads it as positive, neutral or negative.</p>
+    </div>
+    <div class="workbench">
+      <form id="analysis">
+        <div class="section-line">
+          <label for="tweet">Text to check</label>
+          <span id="count">0 / 2000</span>
+        </div>
+        <textarea id="tweet" name="text" rows="6" maxlength="2000" required
+                  aria-describedby="limit" placeholder="Paste an English tweet"></textarea>
+        <div class="actions">
+          <button id="submit" type="submit" disabled>Check sentiment <span aria-hidden="true">↗</span></button>
+          <button id="clear" class="quiet" type="button">Clear</button>
+        </div>
+        <noscript><p>Enable JavaScript to use this form, or open the <a href="/docs">API docs</a>.</p></noscript>
+        <p id="limit" class="note">Up to 2,000 characters and 256 model tokens.</p>
+      </form>
+      <section class="result" aria-labelledby="result-title">
+        <h2 id="result-title">Prediction</h2>
+        <div id="result" role="status" aria-atomic="true">
+          <p id="label">Waiting for text</p>
+          <p id="detail" class="note">Check a tweet to see its label here.</p>
+        </div>
+      </section>
+      <div class="examples">
+        <h2>Try an example</h2>
+        <button type="button">The update fixed the bug. I can finally use the app again!</button>
+        <button type="button">The next train leaves at 6:40.</button>
+        <button type="button">My order arrived broken and support hasn't replied.</button>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <span>MiniLM trained on TweetEval sentiment.</span>
+    <a href="https://github.com/EshkirenokCode/tweet-sentiment/blob/main/reports/evaluation.md">Read the evaluation</a>
+  </footer>
+</body>
+</html>

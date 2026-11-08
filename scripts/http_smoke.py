@@ -9,8 +9,10 @@ if __name__ == "__main__":
     parser.add_argument("--url", required=True)
     args = parser.parse_args()
     with httpx.Client(base_url=args.url, timeout=30) as client:
-        redirect = client.get("/")
-        assert redirect.status_code == 307 and redirect.headers["location"] == "/docs"
+        page = client.get("/")
+        assert page.status_code == 200 and 'id="tweet"' in page.text
+        assert client.get("/assets/site.css").status_code == 200
+        assert client.get("/assets/site.js").status_code == 200
         assert client.get("/health").json() == {"status": "alive"}
         readiness = client.get("/ready").json()
         assert readiness["status"] == "ready"

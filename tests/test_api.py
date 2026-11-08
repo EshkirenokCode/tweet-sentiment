@@ -30,9 +30,11 @@ def artifact(tmp_path):
 
 def test_success_and_docs(artifact):
     with TestClient(create_app(artifact)) as client:
-        redirect = client.get("/", follow_redirects=False)
-        assert redirect.status_code == 307
-        assert redirect.headers["location"] == "/docs"
+        page = client.get("/")
+        assert page.status_code == 200
+        assert 'id="tweet"' in page.text
+        assert client.get("/assets/site.css").status_code == 200
+        assert client.get("/assets/site.js").status_code == 200
         assert client.get("/health").status_code == 200
         assert client.get("/ready").json()["status"] == "ready"
         response = client.post("/predict", json={"text": "good great"})

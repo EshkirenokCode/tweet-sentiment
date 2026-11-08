@@ -6,8 +6,9 @@ from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from starlette.responses import JSONResponse, RedirectResponse
+from starlette.responses import FileResponse, JSONResponse
 from threadpoolctl import threadpool_limits
 
 from tweet_sentiment import LABELS, __version__
@@ -131,9 +132,12 @@ def create_app(artifact_dir=None):
             },
         )
 
+    ui = Path(__file__).with_name("ui")
+    app.mount("/assets", StaticFiles(directory=ui), name="assets")
+
     @app.get("/", include_in_schema=False)
     def index():
-        return RedirectResponse("/docs")
+        return FileResponse(ui / "index.html", media_type="text/html")
 
     @app.get("/health")
     def health():

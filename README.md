@@ -4,7 +4,7 @@ English text classification into `negative`, `neutral`, or `positive`.
 MiniLM fine-tuned on TweetEval sentiment, served on CPU through int8 ONNX.
 Author: Ilia Gulevskii.
 
-[Live API](https://tweet-sentiment.gulevskii.dev/docs) ·
+[Try the classifier](https://tweet-sentiment.gulevskii.dev) · [API docs](https://tweet-sentiment.gulevskii.dev/docs) ·
 [Evaluation](reports/evaluation.md) · [Data and model sources](DATA.md)
 
 | Version | Model | Test accuracy | Macro-F1 |
@@ -36,12 +36,13 @@ curl -H 'Content-Type: application/json' \
 ```
 
 Response: `{"label":"positive","model_version":"1.2.0"}`.
-`/` redirects to `/docs`; `/health` checks the process, `/ready` checks the model.
+`/` opens the classifier. `/docs` describes the API.
+`/health` checks the process and `/ready` checks the model.
 Limits: 2000 characters, 256 model tokens and 8192 HTTP-body bytes. Token-overflow
 inputs are rejected, never silently truncated. Invalid/empty input returns 422.
 The API returns no calibrated confidence score.
 
-API release **1.2.1** serves the unchanged **1.2.0 model**. `GET /model` reports
+API release **1.3.0** serves the unchanged **1.2.0 model**. `GET /model` reports
 both versions, the expected language, labels and input limits. Validation errors
 return field locations and explanations without echoing submitted values.
 Unpaired Unicode surrogate escapes and non-finite numeric inputs return 422.
